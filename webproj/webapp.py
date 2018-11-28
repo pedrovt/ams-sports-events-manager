@@ -196,14 +196,17 @@ class WebApp(object):
 
 
 if __name__ == '__main__':
+    baseDir = os.path.dirname(os.path.abspath(__file__))
+	
     conf = {
         '/': {
             'tools.sessions.on': True,
-            'tools.staticdir.root': os.path.abspath(os.getcwd())
+            'tools.staticdir.root': baseDir
         },
         '/static': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': './static'
         }
     }
+    cherrypy.config.update({'server.socket_host' : '0.0.0.0'})  # THIS LINE CAN'T BE DELETED
     cherrypy.quickstart(WebApp(), '/', conf)
