@@ -69,15 +69,10 @@ class WebApp(object):
                 self.set_user(usr)
                 break
     
-    def create_usrDB(self, usr, pwd):
-        user = self.get_user()
+    def create_usrDB(self, usr, pwd, email):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
-        sql = "select password from users where username == '{}'".format(usr)
+        sql = "insert into users (username,password,is_superuser,email) values ({},{},0,{})".format(usr,pwd,email)
         cur = db_con.execute(sql)
-        row = cur.fetchone()
-        if row != None:
-            if row[0] == pwd:
-                self.set_user(usr)
         db_con.close()
 
 ########################################################################################################################
@@ -116,6 +111,7 @@ class WebApp(object):
 
     @cherrypy.expose
     def login(self, username=None, password=None):
+        print(username, password)
         if username == None:
             tparams = {
                 'title': 'Login',
@@ -140,6 +136,7 @@ class WebApp(object):
 
     @cherrypy.expose
     def signup(self, username=None, password=None, mail=None):
+        print(username, password, mail)
         if username == None:
             tparams = {
                 'title': 'Sign up',
@@ -168,26 +165,24 @@ class WebApp(object):
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
-    def create_event(self, username=None):
-        if username == None:
+    def create_event(self):
+        print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
             tparams = {
-                'title': 'Login',
+                'title' : 'Login',
+                'errors' : False,
+                'user' : self.get_user(),
+                'year' : datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Create Event',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year,
+                'year': datetime.now().year
             }
-            return self.render('signup.html', tparams)
-        else:
-            #self.do_authenticationJSON(username, password)
-            self.do_authenticationDB(username, password)
-            if not self.get_user()['is_authenticated']:
-                tparams = {
-                    'title': 'Login',
-                    'errors': True,
-                    'user': self.get_user(),
-                    'year': datetime.now().year,
-                }
-                return self.render('eventgen.html', tparams)
+            return self.render('eventgen.html', tparams)
 
 
     @cherrypy.expose

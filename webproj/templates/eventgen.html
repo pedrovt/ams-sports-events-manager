@@ -19,7 +19,7 @@
                 <div class="form-group">
                     <label for="id_e_date"></label>
                     <div class="col-md-10">
-                        <h6>Evente date</h6>
+                        <h6>Event date</h6>
                         <input id="id_e_date" maxlength="254" name="e_date" type="date">
                     </div>
                 </div>
@@ -48,8 +48,13 @@
                     <label for="id_e_visibility"></label>
                     <div class="col-md-10">
                       <h6>Event visibility</h6>
-                      <input type="radio" name="private" id="e_priv">
-                      <input type="radio" name="public" id="e_priv">
+                      <form action="eventgen_submit" method="get" accept-charset="utf-8">
+                        Privado:
+                        <input type="radio" name="private" id="e_priv" checked="unchecked" onclick="documen.getElementById('e_pub').checked=false">
+                        <br>
+                        Público:
+                        <input type="radio" name="public" id="e_pub" checked="unchecked" onclick="documen.getElementById('e_priv').checked=false">
+                      </form>
                     </div>
                 </div>
                 <div class="form-group">
