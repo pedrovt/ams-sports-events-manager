@@ -52,6 +52,7 @@ class WebApp(object):
         user = self.get_user()
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         sql = "select password from users where username == '{}'".format(usr)
+        print(sql)
         cur = db_con.execute(sql)
         row = cur.fetchone()
         if row != None:
@@ -71,9 +72,14 @@ class WebApp(object):
     
     def create_usrDB(self, usr, pwd, email):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
-        sql = "insert into users (username,password,is_superuser,email) values ({},{},0,{})".format(usr,pwd,email)
-        cur = db_con.execute(sql)
-        db_con.close()
+        sql = "insert into users (username,password,is_superuser,email) values ('{}','{}','0','{}')".format(usr,pwd,email)
+        print(sql)
+        try:
+            cur = db_con.execute(sql)
+            db_con.close()
+        except sqlite3.Error as e:
+            return e
+        return None
 
 ########################################################################################################################
 #   Controllers
@@ -146,18 +152,18 @@ class WebApp(object):
             }
             return self.render('signup.html', tparams)
         else:
-            #self.do_authenticationJSON(username, password)
-            self.do_authenticationDB(username, password)
-            if not self.get_user()['is_authenticated']:
-                tparams = {
-                    'title': 'Sign up',
-                    'errors': True,
-                    'user': self.get_user(),
-                    'year': datetime.now().year,
-                }
-                return self.render('signup.html', tparams)
-            else:
+            e = self.create_usrDB(username, password,mail)
+            if not e:
                 raise cherrypy.HTTPRedirect("/")
+            tparams = {
+                'title': 'Sign up',
+                'errors': True,
+                'user': self.get_user(),
+                'year': datetime.now().year,
+            }
+            return self.render('signup.html', tparams)
+            
+            #return self.render('signup.html', tparams)
 
     @cherrypy.expose
     def logout(self):
