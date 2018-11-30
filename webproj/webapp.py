@@ -76,6 +76,9 @@ class WebApp(object):
         print(sql)
         try:
             cur = db_con.execute(sql)
+            cur = db_con.execute("select * from users")
+            print(cur.fetchall())
+            db_con.commit()
             db_con.close()
         except sqlite3.Error as e:
             return e
@@ -117,7 +120,6 @@ class WebApp(object):
 
     @cherrypy.expose
     def login(self, username=None, password=None):
-        print(username, password)
         if username == None:
             tparams = {
                 'title': 'Login',
@@ -127,7 +129,6 @@ class WebApp(object):
             }
             return self.render('login.html', tparams)
         else:
-            #self.do_authenticationJSON(username, password)
             self.do_authenticationDB(username, password)
             if not self.get_user()['is_authenticated']:
                 tparams = {
@@ -162,8 +163,6 @@ class WebApp(object):
                 'year': datetime.now().year,
             }
             return self.render('signup.html', tparams)
-            
-            #return self.render('signup.html', tparams)
 
     @cherrypy.expose
     def logout(self):
