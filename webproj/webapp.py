@@ -71,6 +71,7 @@ class WebApp(object):
                 break
     
     def create_usrDB(self, usr, pwd, email):
+        print(WebApp.dbsqlite)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         sql = "insert into users (username,password,is_superuser,email) values ('{}','{}','0','{}')".format(usr,pwd,email)
         print(sql)
@@ -197,7 +198,7 @@ class WebApp(object):
 
 if __name__ == '__main__':
     baseDir = os.path.dirname(os.path.abspath(__file__))
-	
+    print("Dir is " + str(baseDir))
     conf = {
         '/': {
             'tools.sessions.on': True,
@@ -206,6 +207,10 @@ if __name__ == '__main__':
         '/static': {
             'tools.staticdir.on': True,
             'tools.staticdir.dir': './static'
+        },
+        '/favicon.ico':{
+            'tools.staticfile.on': True,
+            'tools.staticfile.filename': './static/favicon.ico'
         }
     }
     cherrypy.config.update({'server.socket_host' : '0.0.0.0'})  # THIS LINE CAN'T BE DELETED
