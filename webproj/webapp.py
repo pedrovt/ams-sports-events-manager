@@ -183,12 +183,32 @@ class WebApp(object):
             return self.render('login.html', tparams)
         else:
             tparams = {
-                'title': 'Create Event',
+                'title': 'Create an Event',
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year
             }
-            return self.render('eventgen.html', tparams)
+            return self.render('create_event.html', tparams)
+
+    @cherrypy.expose
+    def my_events(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title' : 'Login',
+                'errors' : False,
+                'user' : self.get_user(),
+                'year' : datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'My Events',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('my_events.html', tparams)
 
 
     @cherrypy.expose

@@ -1,0 +1,13 @@
+{% if user.is_authenticated %}
+
+<li class="nav-item">
+    <a class="nav-link" href="create_event">Create an Event</a>
+</li>
+<li class="nav-item">
+    <a class="nav-link" href="my_events">My Events</a>
+</li>
+
+{% else %}
+
+{% endif %}
+

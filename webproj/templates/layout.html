@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="static/content/bootstrap.min.css" />
     <!-- Custom styles for this template -->
     <link rel="stylesheet" type="text/css" href="static/content/site.css" />
+    <link rel="stylesheet" type="text/css" href="static/content/pikaday.min.css" />
 
   </head>
 
@@ -26,14 +27,9 @@
 
       <div class="collapse navbar-collapse" id="navbarDefault">
         <ul class="navbar-nav mr-auto">
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="about">Documentação</a>
-          </li>
+          {% include 'navbarpartial.html' %}
           <li class="nav-item">
-            <a class="nav-link" href="contact">Contactos</a>
-          </li> -->
-          <li class="nav-item">
-            <a class="nav-link" href="create_event">Criar evento</a>
+            <a class="nav-link" href="about">About</a>
           </li>
         </ul>
         {% include 'loginpartial.html' %}
