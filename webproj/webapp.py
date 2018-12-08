@@ -210,6 +210,108 @@ class WebApp(object):
             }
             return self.render('my_events.html', tparams)
 
+    @cherrypy.expose
+    def event_details(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title': 'Login',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Event Details',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('event_details.html', tparams)
+    
+    @cherrypy.expose
+    def add_participants(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title': 'Login',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Add Participants',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('add_participants.html', tparams)
+
+    @cherrypy.expose
+    def add_results(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title': 'Login',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Add Results',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('add_results.html', tparams)
+
+    @cherrypy.expose
+    def see_results(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title': 'Login',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Results',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('see_results.html', tparams)
+
+    @cherrypy.expose
+    def create_documents(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title': 'Login',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Create Documents',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('create_documents.html', tparams)
+
+
+
 
     @cherrypy.expose
     def shut(self):
