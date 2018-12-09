@@ -1,6 +1,12 @@
 /venv/*
 .idea/*
 
+archives/*
+webproj/__pycache__/*
+webproj/.idea/*
+webproj/html/todo*
+*.pyc
+
 #built application files
 #*.apk
 *.ap_
