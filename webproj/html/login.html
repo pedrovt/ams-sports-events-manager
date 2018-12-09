@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="card align-items-center" style="width: 22rem;  margin: 0 auto;   text-align: center">
+<div class="card align-items-center" style="width: 22rem;  margin: 0 auto; text-align: center">
     <div class="card-body align-items-center">
         <img class="card-img-top" src="static/images/logo.png" alt="Card image cap">
         <h5 class="card-title">{{ title }}</h5>
@@ -22,7 +22,10 @@
                     <input class="form-control" type="submit" value="Log in" class="btn btn-default" />
                 </div>
                 {% if errors %}
-                <p class="validation-summary-errors">Please enter a correct user name and password.</p>
+                <div class="alert alert-primary" role="alert">
+                    Please enter a correct user name and password.
+                </div>
+                <!-- <p class="validation-summary-errors">Please enter a correct user name and password.</p> -->
                 {% endif %}
             </form>
         </section>

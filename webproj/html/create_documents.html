@@ -1,0 +1,93 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="jumbotron" style="background-image: url(static/images/header_off.png); color:white">
+    <h1>{{ title }}</h1>
+    <p class="lead">Select the documents you want to create and give us some information about them</p>
+</div>
+
+<!-- one card per type of document -->
+<!-- checkbox,  name of authorities per card -->
+
+<div class="container">
+    <div class="row">
+        <div class="card-deck">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Security Documentation</h5>
+                    <p class="card-text">
+                        <div class="form-group">
+                            <label for="security_info">Authority Name</label>
+                            <input type="text" class="form-control" id="security_info" aria-describedby="security_info"
+                                placeholder="e.g. PSP, GNR, etc.">
+                        </div>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox_security" value="option1">
+                        <label class="form-check-label" for="inlineCheckbox_security">Create</label>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Health Documentation</h5>
+                    <p class="card-text">
+                        <div class="form-group">
+                            <label for="health_info">Authority Name</label>
+                            <input type="text" class="form-control" id="health_info" aria-describedby="health_info" placeholder="e.g. INEM, Hospital of Aveiro, etc.">
+                        </div>
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox_health" value="option1">
+                        <label class="form-check-label" for="inlineCheckbox_health">Create</label>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Invitations</h5>
+                    <p class="card-text">
+                    </p>
+                </div>
+                <div class="card-footer">
+                    <div class="form-check form-check-inline">
+                        <input class="form-check-input" type="checkbox" id="inlineCheckbox_invitations" value="option1">
+                        <label class="form-check-label" for="inlineCheckbox_invitations">Create</label>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Soon</h5>
+                    <p class="card-text">
+                        Health, Food & Drinks, Sponsors & Local Documentation
+                    </p>
+                    <p class="card-text">
+                        Results Tables & Announcements
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row"><br></div>
+    <div class="row">
+        <button type="submit" class="btn btn-primary">Create Documents</button>
+    </div>
+</div>
+
+
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="static/scripts/jquery.validate.min.js"></script>
+{% endblock %}
