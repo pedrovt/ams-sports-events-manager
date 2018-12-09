@@ -2,85 +2,78 @@
 
 {% block content %}
 
-<h2>{{ title }}</h2>
-<div class="row">
-    <div class="col-md-8">
-        <h4>Give us some information about your event</h4>
-        <hr />
-        
-        <section id="loginForm">
-            <form action="login" method="post" class="form-horizontal">
-               
-                <div class="form-group row">
-                    <label for="id_e_name" class="col-sm-2 col-form-label">Name</label>
-                    <div class="col-md-10">
-                        <input class="form-control" id="id_e_name" maxlength="254" name="e_name" type="text">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_e_date" class="col-sm-2 col-form-label">Start Date</label>
-                    <div class="col-md-10">
-                        <input class="form-control" id="id_e_date_end" maxlength="254" name="e_date" type="date">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_e_date" class="col-sm-2 col-form-label">End Date</label>
-                    <div class="col-md-10">
-                        <input class="form-control" id="id_e_date_end" maxlength="254" name="e_date" type="date">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_e_place" class="col-sm-2 col-form-label">Place</label>
-                    <div class="col-md-10">
-                        <input class="form-control" id="id_e_place" name="e_place" type="text">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_e_mod" class="col-sm-2 col-form-label">Modality</label>
-                    <select id="id_e_mod" name="e_mod" class="form-control">
-                        <option selected>Choose...</option>
-                        <option>...</option>
-                    </select>
+<div class="jumbotron" style="background-image: url(static/background.png); color:white">
+    <h1>{{ title }}</h1>
+    <p class="lead">Give us some information about your event</p>
+</div>
 
+<div class="container">
+    <section id="eventForm">
+        <form action="login" method="post" >
+            
+            <div class="form-group row">
+                <label for="id_e_name" class="col-sm-2 col-form-label">Name</label>
+                <input class="form-control" id="id_e_name" maxlength="254" name="e_name" type="text" placeholder="e.g. The Gellers' Cup">
+            </div>
+            <div class="form-group row">
+                <label for="id_e_date" class="col-sm-2 col-form-label">Start Date</label>
+                <input class="form-control" id="id_e_date_end" maxlength="254" name="e_date" type="date">
+            </div>
+            <div class="form-group row">
+                <label for="id_e_date" class="col-sm-2 col-form-label">End Date</label>
+                <input class="form-control" id="id_e_date_end" maxlength="254" name="e_date" type="date">
+            </div>
+            <div class="form-group row">
+                <label for="id_e_place" class="col-sm-2 col-form-label">Place</label>
+                <input class="form-control" id="id_e_place" name="e_place" type="text" placeholder="e.g. Aveiro, Braga Municipal Stadium">
+            </div>
+            <div class="form-group row">
+                <label for="id_e_mod" class="col-sm-2 col-form-label">Modality</label>
+                <select id="id_e_mod" name="e_mod" class="form-control">
+                    <option selected>Football</option>
+                    <option>Volleyball</option>
+                    <option>Other</option>
+                </select>
+            </div>
+            <div class="form-group row">
+                <label for="id_e_part" class="col-sm-2 col-form-label">Dimension</label>
+                <select id="id_e_part" name="e_part" class="form-control" type="number">
+                    <option selected>Small (1-10 participants)</option>
+                    <option>Medium (10-100 participants)</option>
+                    <option>Large (100+ participants)</option>
+                </select>
+            </div>
+            
+            <div class="form-group row">
+                <label for="id_e_visibility" class="col-sm-2 col-form-label">Visibility</label>
+                <select id="id_e_part" name="e_part" class="form-control" type="number">
+                    <option selected>Public</option>
+                    <option>Private</option>
+                </select>
+                
+                <!-- <form action="eventgen_submit" method="get" accept-charset="utf-8">
+                Private:
+                <input class="form-control" type="radio" name="private" id="e_priv" checked="unchecked" onclick="documen.getElementById('e_pub').checked=false">
+                <br>
+                Public:
+                <input class="form-control" type="radio" name="public" id="e_pub" checked="unchecked" onclick="documen.getElementById('e_priv').checked=false">
+                </form> -->
+            </div>
+            <div class="form-group row">
+                <label for="id_e_icon" class="col-sm-2 col-form-label">Icon (Soon)</label>
+            </div>
+            <div class="form-group row">
+                <div class="col-md-offset-2 col-md-10">
+                    <input type="submit" value="Create event" class="btn btn-default" />
                 </div>
-                <div class="form-group row">
-                    <label for="id_e_part" class="col-sm-2 col-form-label">Dimension</label>
-                    <div class="col-md-10">
-                        <input class="form-control" id="id_e_part" name="e_part" type="number">
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_e_visibility" class="col-sm-2 col-form-label">Visibility</label>
-                    <div class="col-md-10">
-                      <form action="eventgen_submit" method="get" accept-charset="utf-8">
-                        Private:
-                        <input class="form-control" type="radio" name="private" id="e_priv" checked="unchecked" onclick="documen.getElementById('e_pub').checked=false">
-                        <br>
-                        Public:
-                        <input class="form-control" type="radio" name="public" id="e_pub" checked="unchecked" onclick="documen.getElementById('e_priv').checked=false">
-                      </form>
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <label for="id_e_icon" class="col-sm-2 col-form-label">Icon</label>
-                    <div class="col-md-10">
-                        Soon
-                    </div>
-                </div>
-                <div class="form-group row">
-                    <div class="col-md-offset-2 col-md-10">
-                        <input type="submit" value="Create event" class="btn btn-default" />
-                    </div>
-                </div>
-                {% if errors %}
-                <p class="validation-summary-errors">Ops, something went wrong!</p>
-                {% endif %}
-            </form>
-        </section>
-    </div>
-    <div class="col-md-4">
-        <section id="socialLoginForm"></section>
-    </div>
+            </div>
+            {% if errors %}
+            <p class="validation-summary-errors">Ops, something went wrong!</p>
+            {% endif %}
+        </form>
+    </section>
+
+    <section id="socialLoginForm"></section>
 </div>
 
 {% endblock %}

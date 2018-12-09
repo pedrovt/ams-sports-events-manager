@@ -5,22 +5,57 @@
 <div class="jumbotron" style="background-image: url(static/background.jpg); color:white">
     <h1>{{ title }}</h1>
     <p class="lead">Details of Your Event</p>
-    <p><a href="my_events" class="btn btn-primary btn-large">See other events &raquo;</a></p>
+    <p><a href="my_events" class="btn btn-primary btn-large">Go back to your events &raquo;</a></p>
 </div>
 
-<div class="row">
-    <div class="col-md-8">
-        <section id="eventsActions">
-            <div class="list-group">
-                <a href="create_documents"  class="list-group-item list-group-item-action">Create Documents</a>
-                <a href="add_participants"  class="list-group-item list-group-item-action">Add Participants</a>
-                <a href="add_results"       class="list-group-item list-group-item-action">Add Results</a>
-                <a href="see_results"       class="list-group-item list-group-item-action">See Results</a>
-                <a href="see_participants"  class="list-group-item list-group-item-action">See Participants</a>
-                <a href="delete_event"      class="list-group-item list-group-item-action">Delete Event</a>
-            </div>
-        </section>
+<div class="card-group">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">About your event</h5>
+            <p class="card-text">EVENT BASIC INFO</p>
+        </div>
+        <div class="card-footer">
+            <p class="card-text"><small class="text-muted"><a href="#" class="list-group-item list-group-item-action">Edit Information (Soon)</a></small></p>
+            <p class="card-text"><small class="text-muted"><a href="delete_event" class="list-group-item list-group-item-action">Delete Event</a></small></p>
+        </div>
     </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Documents</h5>
+            <p class="card-text">Create or consult the documents you generated.</p>
+        </div>
+        <div class="card-footer">
+            <p class="card-text"><small class="text-muted"><a href="create_documents" class="list-group-item list-group-item-action">Create Documents</a></small></p>
+            <p class="card-text"><small class="text-muted"><a href="create_documents" class="list-group-item list-group-item-action">See Documents</a></small></p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Participants</h5>
+            <p class="card-text">Add or consult your event's participants.</p>
+        </div>
+        
+        <div class="card-footer">
+            <p class="card-text"><small class="text-muted"><a href="add_participants" class="list-group-item list-group-item-action">Add Participants</a></small></p>
+            <p class="card-text"><small class="text-muted"><a href="see_participants" class="list-group-item list-group-item-action">See Participants</a></small></p>
+        </div>
+    </div>
+
+     <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Results</h5>
+            <p class="card-text">Add (or update if the results are obtained automatically) and consult your event's results.</p>
+        </div>
+        
+        <div class="card-footer">
+            <p class="card-text"><small class="text-muted"><a href="add_results" class="list-group-item list-group-item-action">Add Results</a></small></p>
+            <p class="card-text"><small class="text-muted"><a href="see_results" class="list-group-item list-group-item-action">See Results</a></small></p>
+        </div>
+    </div>
+
+
 </div>
 
 {% endblock %}
