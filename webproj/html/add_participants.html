@@ -1,0 +1,57 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="jumbotron" style="background-image: url(static/images/header_level3.png); color:white">
+    <h1>{{ title }}</h1>
+    <p class="lead">Give us the info about the participant(s) you want to add to your event</p>
+</div>
+
+<div class="container">
+    <!-- one card -->
+    <div class="card-deck">
+
+        <div class="card">
+            <div class="card-body">
+                <h5 class="card-title">Participant Info</h5>
+                <p class="card-text">
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" class="form-control" id="participant_username" aria-describedby="participant_username" placeholder="e.g. pedro, maria_soares">
+                        <small id="passwordHelpBlock" class="form-text text-muted">
+                            If the participant does not have an account, sign up is needed.
+                        </small>
+                        
+                    </div>
+                
+                    {% if errors %}
+                    <div class="alert alert-primary" role="alert">
+                        Please enter a valid user name!
+                    </div>
+                    {% endif %}
+                </p>
+            </div>
+            <div class="card-footer">
+                <div class="form-check form-check-inline">
+                    <p class="card-text"><small class="text-muted">
+                        <a href="#" class="list-group-item list-group-item-action">Add
+                                Participant</a></small></p>
+                    <p class="card-text"><small class="text-muted">
+                        <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
+                        <label class="form-check-label" for="defaultCheck1">
+                        Add more
+                    </small></p>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="static/scripts/jquery.validate.min.js"></script>
+{% endblock %}
