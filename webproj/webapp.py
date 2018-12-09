@@ -13,7 +13,7 @@ class WebApp(object):
 
     def __init__(self):
         self.env = Environment(
-                loader=PackageLoader('webapp', 'templates'),
+                loader=PackageLoader('webapp', 'html'),
                 autoescape=select_autoescape(['html', 'xml'])
                 )
 
@@ -91,6 +91,7 @@ class WebApp(object):
     @cherrypy.expose
     def index(self):
         tparams = {
+            'title': 'Home',
             'user': self.get_user(),
             'year': datetime.now().year,
         }
@@ -352,7 +353,7 @@ if __name__ == '__main__':
         },
         '/favicon.ico':{
             'tools.staticfile.on': True,
-            'tools.staticfile.filename': './static/favicon.ico'
+            'tools.staticfile.filename': '/static/images/favicon.ico'
         }
     }
     cherrypy.config.update({'server.socket_host' : '0.0.0.0'})  # THIS LINE CAN'T BE DELETED
