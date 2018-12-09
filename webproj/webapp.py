@@ -140,7 +140,7 @@ class WebApp(object):
                 }
                 return self.render('login.html', tparams)
             else:
-                raise cherrypy.HTTPRedirect("/")
+                raise cherrypy.HTTPRedirect("/my_events")
 
     @cherrypy.expose
     def signup(self, username=None, password=None, mail=None):
@@ -269,6 +269,26 @@ class WebApp(object):
                 'year': datetime.now().year
             }
             return self.render('add_results.html', tparams)
+
+    @cherrypy.expose
+    def see_participants(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title': 'Login',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Participants',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('see_participants.html', tparams)
 
     @cherrypy.expose
     def see_results(self):

@@ -2,8 +2,11 @@
 
 {% block content %}
 
-<h2>{{ title }}</h2>
-<h3>{{ message }}</h3>
+<div class="jumbotron" style="background-image: url(static/background.jpg); color:white">
+    <h1>{{ title }}</h1>
+    <!-- <h3>{{ message }}</h3> -->
+    <p><a href="https://pedroteix.wixsite.com/city-running" class="btn btn-primary btn-large">Learn More &raquo;</a></p>
+</div>
 
 <p>
     We want to help those who want to create any type of event related to sports, and to do that we created an app that
@@ -14,7 +17,7 @@
 </p>
 <p>
     The CityRunning Project saves time for anyone who wants to organize an event, whether it's a small thing like a
-    football tournament, or even something complex like a city marathon
+    football tournament, or even something complex like a city marathon.
 </p>
 
 {% endblock %}

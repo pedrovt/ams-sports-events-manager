@@ -36,4 +36,4 @@ output.json
 
 #NDK
 obj/
-.externalNativeBuild
+.externalNativeBuildtests/

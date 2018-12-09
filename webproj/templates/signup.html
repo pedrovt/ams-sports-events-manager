@@ -2,7 +2,12 @@
 
 {% block content %}
 
-<h2>{{ title }}</h2>
+<div class="jumbotron" style="background-image: url(static/background.jpg); color:white">
+    <h1>{{ title }}</h1>
+    <p class="lead">Let's get started!</p>
+    <p><a href="login" class="btn btn-primary btn-large">Login if you already have an account &raquo;</a></p>
+</div>
+
 <div class="row">
     <div class="col-md-8">
         <section id="signupForm">
@@ -10,24 +15,24 @@
                 <h4>Register in The CityRunning Project</h4>
                 <hr />
                 <div class="form-group">
-                    <label for="id_usermail"></label>
-                    <div class="col-md-10">
-                        <h6>E-mail</h6>
-                        <input id="id_usemail" maxlength="254" name="mail" type="email">
-                    </div>
-                </div>
-                <div class="form-group">
                     <label for="id_username"></label>
                     <div class="col-md-10">
                         <h6>Username</h6>
-                        <input id="id_username" maxlength="254" name="username" type="text">
+                        <input id="id_username" maxlength="254" name="username" type="text" placeholder="Username">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_usermail"></label>
+                    <div class="col-md-10">
+                        <h6>E-mail Address</h6>
+                        <input id="id_usemail" maxlength="254" name="mail" type="email" placeholder="E-mail Address">
                     </div>
                 </div>
                 <div class="form-group">
                     <label for="id_password"></label>
                     <div class="col-md-10">
                         <h6>Password</h6>
-                        <input id="id_password" name="password" type="password">
+                        <input id="id_password" name="password" type="password" placeholder="Password">
                     </div>
                 </div>
                 <div class="form-group">
@@ -52,3 +57,4 @@
 {% block scripts %}
     <script src="static/scripts/jquery.validate.min.js"></script>
 {% endblock %}
+
