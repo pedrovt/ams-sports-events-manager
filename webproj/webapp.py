@@ -6,7 +6,6 @@ import sqlite3
 from sqlite3 import Error
 import json
 
-
 class WebApp(object):
     dbsqlite = 'data/db.sqlite3'
     dbjson = 'data/db.json'
@@ -17,9 +16,8 @@ class WebApp(object):
                 autoescape=select_autoescape(['html', 'xml'])
                 )
 
-
-########################################################################################################################
-#   Utilities
+    ########################################################################################################################
+    # Utilities
 
     def set_user(self, username=None):
         if username == None:
@@ -27,17 +25,14 @@ class WebApp(object):
         else:
             cherrypy.session['user'] = {'is_authenticated': True, 'username': username}
 
-
     def get_user(self):
         if not 'user' in cherrypy.session:
             self.set_user()
         return cherrypy.session['user']
 
-
     def render(self, tpg, tps):
         template = self.env.get_template(tpg)
         return template.render(tps)
-
 
     def db_connection(db_file):
         try:
@@ -46,7 +41,6 @@ class WebApp(object):
         except Error as e:
             print(e)
         return None
-
 
     def do_authenticationDB(self, usr, pwd):
         user = self.get_user()
@@ -85,9 +79,14 @@ class WebApp(object):
             return e
         return None
 
-########################################################################################################################
-#   Controllers
+    ########################################################################################################################
+    # Documents Generation
 
+    ########################################################################################################################
+    # Controllers
+
+    # -------------------------------------------------
+    # Initial Pages
     @cherrypy.expose
     def index(self):
         tparams = {
@@ -96,7 +95,6 @@ class WebApp(object):
             'year': datetime.now().year,
         }
         return self.render('index.html', tparams)
-
 
     @cherrypy.expose
     def about(self):
@@ -108,18 +106,8 @@ class WebApp(object):
         }
         return self.render('about.html', tparams)
 
-
-    @cherrypy.expose
-    def contact(self):
-        tparams = {
-            'title': 'Contact',
-            'message': 'Your contact page.',
-            'user': self.get_user(),
-            'year': datetime.now().year,
-        }
-        return self.render('contact.html', tparams)
-
-
+    # -------------------------------------------------
+    # Authentication
     @cherrypy.expose
     def login(self, username=None, password=None):
         if username == None:
@@ -170,7 +158,9 @@ class WebApp(object):
     def logout(self):
         self.set_user()
         raise cherrypy.HTTPRedirect("/")
-
+    
+    # -------------------------------------------------
+    # Event Management Pages
     @cherrypy.expose
     def create_event(self):
         print('usr on: ', self.get_user()['is_authenticated'])
@@ -231,6 +221,8 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
     
+    # -------------------------------------------------
+    # Add Info Pages
     @cherrypy.expose
     def add_participants(self):
         #print('usr on: ', self.get_user()['is_authenticated'])
@@ -272,6 +264,28 @@ class WebApp(object):
             return self.render('add_results.html', tparams)
 
     @cherrypy.expose
+    def create_documents(self):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        if not self.get_user()['is_authenticated']:
+            tparams = {
+                'title': 'Login',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('login.html', tparams)
+        else:
+            tparams = {
+                'title': 'Create Documents',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            return self.render('create_documents.html', tparams)
+
+    # -------------------------------------------------
+    # See Info Pages
+    @cherrypy.expose
     def see_participants(self):
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
@@ -312,7 +326,7 @@ class WebApp(object):
             return self.render('see_results.html', tparams)
 
     @cherrypy.expose
-    def create_documents(self):
+    def see_documents(self):
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -324,21 +338,18 @@ class WebApp(object):
             return self.render('login.html', tparams)
         else:
             tparams = {
-                'title': 'Create Documents',
+                'title': 'Documents',
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year
             }
-            return self.render('create_documents.html', tparams)
-
-
-
+            return self.render('see_documents.html', tparams)
 
     @cherrypy.expose
     def shut(self):
         cherrypy.engine.exit()
 
-
+    
 if __name__ == '__main__':
     baseDir = os.path.dirname(os.path.abspath(__file__))
     print("Dir is " + str(baseDir))
