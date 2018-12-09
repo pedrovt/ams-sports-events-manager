@@ -163,6 +163,9 @@ class WebApp(object):
     # Event Management Pages
     @cherrypy.expose
     def create_event(self):
+        # TODO this page needs:
+        # -> Read info from form and add to DB
+
         print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -183,6 +186,10 @@ class WebApp(object):
 
     @cherrypy.expose
     def my_events(self):
+        # TODO this page needs:
+        # -> Receive list of events info. Each event is a card
+        #   -> Each card needs event name, dates & type
+
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -203,6 +210,9 @@ class WebApp(object):
 
     @cherrypy.expose
     def event_details(self):
+        # TODO this page needs:
+        # -> Receive all event info to put in card About your event
+
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -221,10 +231,21 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
     
+    @cherrypy.expose
+    def delete_event(self):
+        # TODO 
+        pass
+
     # -------------------------------------------------
     # Add Info Pages
     @cherrypy.expose
     def add_participants(self):
+        # TODO this page needs:
+        # -> If there's no user, return error
+        # -> Else, add participant
+        # -> If Add More, redirect to the same page
+        # -> Else, redirect to event_details
+
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -245,6 +266,10 @@ class WebApp(object):
 
     @cherrypy.expose
     def add_results(self):
+        # TODO this page needs:
+        # -> If Add Result is pressed, add result and return to event_details
+        # -> Else, fetch results from dummy sensor (JSON based?), return error 
+
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -265,6 +290,12 @@ class WebApp(object):
 
     @cherrypy.expose
     def create_documents(self):
+        # TODO this page needs:
+        # -> When Create Documents is pressed
+        # -> For each card:
+        #   -> If Create is selected, read info (if needed)
+        #      apply it to the LaTeX document and save to the db
+
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -287,6 +318,9 @@ class WebApp(object):
     # See Info Pages
     @cherrypy.expose
     def see_participants(self):
+        # TODO this page needs:
+        # -> For each participant/list item: username and email
+
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -307,6 +341,9 @@ class WebApp(object):
 
     @cherrypy.expose
     def see_results(self):
+        # TODO this page needs:
+        # -> For each result/list item: participant name, result and date
+        
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
@@ -327,6 +364,8 @@ class WebApp(object):
 
     @cherrypy.expose
     def see_documents(self):
+        # TODO this page needs:
+        # -> For each document/list item: name, type and link
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {

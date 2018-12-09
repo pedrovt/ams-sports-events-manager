@@ -14,7 +14,7 @@
     <!-- two cards : auto and manual -->
     <div class="card-deck">
 
-        <!-- auto card   : fetch button -->
+        <!-- manual card : inputs for date, participant, result -->
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Manually add the result</h5>
@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <!-- manual card : inputs for date, participant, result -->
+        <!-- auto card   : fetch button -->
         <div class="card">
             <div class="card-body">
                 <h5 class="card-title">Automatically add the result</h5>
@@ -54,6 +54,11 @@
                 <div class="form-check form-check-inline">
                     <p class="card-text"><small class="text-muted"><a href="#" class="list-group-item list-group-item-action">Fetch results</a></small></p>
                 </div>
+                {% if errors %}
+                <div class="alert alert-success" role="alert">
+                    Results added successfully
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
