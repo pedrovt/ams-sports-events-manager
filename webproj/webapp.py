@@ -74,20 +74,12 @@ class WebApp(object):
             return e
         return None
 
-<<<<<<< Updated upstream
-    ########################################################################################################################
-    # Documents Generation
-
-    ########################################################################################################################
-    # Controllers
-=======
     def store_eventDB(self, usr, name, date, place, modality, participants, private, icon):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         sql = "insert into event()"
 
 ########################################################################################################################
 #   Controllers
->>>>>>> Stashed changes
 
     # -------------------------------------------------
     # Initial Pages
@@ -166,14 +158,7 @@ class WebApp(object):
     # -------------------------------------------------
     # Event Management Pages
     @cherrypy.expose
-<<<<<<< Updated upstream
-    def create_event(self):
-        # TODO this page needs:
-        # -> Read info from form and add to DB
-
-=======
     def create_event(self, name, date, place, mod, participants, visibility):
->>>>>>> Stashed changes
         print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
