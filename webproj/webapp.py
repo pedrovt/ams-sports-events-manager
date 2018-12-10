@@ -20,7 +20,6 @@ class WebApp(object):
 
     ########################################################################################################################
     # Utilities
-
     def set_user(self, username=None):
         if username == None:
             cherrypy.session['user'] = {'is_authenticated': False, 'username': ''}
@@ -54,15 +53,6 @@ class WebApp(object):
             if row[0] == pwd:
                 self.set_user(usr)
         db_con.close()
-
-    def do_authenticationJSON(self, usr, pwd):
-        user = self.get_user()
-        db_json = json.load(open(WebApp.dbjson))
-        users = db_json['users']
-        for u in users:
-            if u['username'] == usr and u['password'] == pwd:
-                self.set_user(usr)
-                break
     
     def create_usrDB(self, usr, pwd, email):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
@@ -79,19 +69,38 @@ class WebApp(object):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         username=self.get_user()['username']
         team = "" + username + ";"
-        print(s_date, " - ", e_date, visibility)
         sql = "insert into events (creator, team, e_name, s_date, e_date, place, modality, participants, visibility,icon) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,team,name,s_date,e_date,place,modality,participants,False if visibility=='Private' else True, icon if icon else None)
         try:
-            print(sql)
             cur = db_con.execute(sql)
             db_con.commit()
-            print('bd comitted')
-            cur = db_con.execute("select * from events")
-            print('all events: ',cur.fetchall())
             db_con.close()
         except sqlite3.Error as e:
             return e
         return None
+
+    def get_events(self):
+        username = self.get_user()['username']
+        sql = "select * from events where team like '%{}%'".format(username)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        table = cur.fetchall()
+        db_con.close();
+        lst =[]
+        for event in table:
+            print(event)
+            e = {'creator':event[1],
+                 'management':event[2],
+                 'name':event[3],
+                 'start':event[4],
+                 'end':event[5],
+                 'place':event[6],
+                 'modality':event[7],
+                 'participants':event[8],
+                 'visible':event[9],
+                 'icon_path':event[10]
+                }
+            lst.append(e)
+        return lst
 
 ########################################################################################################################
 #   Controllers
@@ -174,9 +183,6 @@ class WebApp(object):
     # Event Management Pages
     @cherrypy.expose
     def create_event(self, name=None, s_date=None, e_date=None, place=None, modality=None, participants=None, visibility=None, icon=None):
-        #print('usr on: ', self.get_user()['is_authenticated'])
-        #print(self.get_user)
-        #print(name, s_date, e_date, place, modality, participants, visibility)
         #TODO:
         # -> throw exception when event has something missing
         if not self.get_user()['is_authenticated']:
@@ -219,6 +225,13 @@ class WebApp(object):
             }
             return self.render('login.html', tparams)
         else:
+            events_list = self.get_events()
+            #### Uncomment to check proof 
+            #print(events_list)
+            #for e in events_list:
+            #    print('event:')
+            #    for key in e.keys():
+            #        print('\t',key,' : ',e[key])
             tparams = {
                 'title': 'My Events',
                 'errors': False,
