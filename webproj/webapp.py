@@ -1,10 +1,12 @@
+import json
+import os
+import sqlite3
+from datetime import datetime
+from sqlite3 import Error
+
 import cherrypy
 from jinja2 import Environment, PackageLoader, select_autoescape
-import os
-from datetime import datetime
-import sqlite3
-from sqlite3 import Error
-import json
+
 
 class WebApp(object):
     dbsqlite = 'data/db.sqlite3'
@@ -63,7 +65,6 @@ class WebApp(object):
                 break
     
     def create_usrDB(self, usr, pwd, email):
-        print(WebApp.dbsqlite)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         sql = "insert into users (username,password,is_superuser,email) values ('{}','{}','0','{}')".format(usr,pwd,email)
         try:
@@ -74,9 +75,23 @@ class WebApp(object):
             return e
         return None
 
-    def store_eventDB(self, usr, name, date, place, modality, participants, private, icon):
+    def create_eventDB(self, name, s_date, e_date, place, modality, participants, visibility, icon=None):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
-        sql = "insert into event()"
+        username=self.get_user()['username']
+        team = "" + username + ";"
+        print(s_date, " - ", e_date, visibility)
+        sql = "insert into events (creator, team, e_name, s_date, e_date, place, modality, participants, visibility,icon) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,team,name,s_date,e_date,place,modality,participants,False if visibility=='Private' else True, icon if icon else None)
+        try:
+            print(sql)
+            cur = db_con.execute(sql)
+            db_con.commit()
+            print('bd comitted')
+            cur = db_con.execute("select * from events")
+            print('all events: ',cur.fetchall())
+            db_con.close()
+        except sqlite3.Error as e:
+            return e
+        return None
 
 ########################################################################################################################
 #   Controllers
@@ -158,17 +173,21 @@ class WebApp(object):
     # -------------------------------------------------
     # Event Management Pages
     @cherrypy.expose
-    def create_event(self, name, date, place, mod, participants, visibility):
-        print('usr on: ', self.get_user()['is_authenticated'])
+    def create_event(self, name=None, s_date=None, e_date=None, place=None, modality=None, participants=None, visibility=None, icon=None):
+        #print('usr on: ', self.get_user()['is_authenticated'])
+        #print(self.get_user)
+        #print(name, s_date, e_date, place, modality, participants, visibility)
+        #TODO:
+        # -> throw exception when event has something missing
         if not self.get_user()['is_authenticated']:
             tparams = {
                 'title' : 'Login',
                 'errors' : False,
                 'user' : self.get_user(),
                 'year' : datetime.now().year
-            }
+            } 
             return self.render('login.html', tparams)
-        else:
+        elif not name or not s_date or not e_date or not place or not modality or not participants or not visibility:
             tparams = {
                 'title': 'Create an Event',
                 'errors': False,
@@ -176,14 +195,21 @@ class WebApp(object):
                 'year': datetime.now().year
             }
             return self.render('create_event.html', tparams)
+        else:
+            tparams = {
+                'title': 'Successful Event creation',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year
+            }
+            self.create_eventDB(name, s_date, e_date, place, modality, participants, visibility, icon)
+            return self.render('create_documents.html', tparams)
 
     @cherrypy.expose
     def my_events(self):
         # TODO this page needs:
         # -> Receive list of events info. Each event is a card
         #   -> Each card needs event name, dates & type
-
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
                 'title' : 'Login',
@@ -282,14 +308,12 @@ class WebApp(object):
             return self.render('add_results.html', tparams)
 
     @cherrypy.expose
-    def create_documents(self):
+    def create_documents():
         # TODO this page needs:
         # -> When Create Documents is pressed
         # -> For each card:
         #   -> If Create is selected, read info (if needed)
         #      apply it to the LaTeX document and save to the db
-
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
                 'title': 'Login',

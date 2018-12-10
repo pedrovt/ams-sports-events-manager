@@ -9,15 +9,15 @@
 
 <div class="container">
     <section id="eventForm">
-        <form action="login" method="post" >
+        <form action="create_event" method="post" name="main_form">
             
             <div class="form-group row">
                 <label for="id_e_name" class="col-sm-2 col-form-label">Name</label>
-                <input class="form-control" id="id_e_name" maxlength="254" name="e_name" type="text" placeholder="e.g. The Gellers' Cup">
+                <input class="form-control" id="id_e_name" maxlength="254" name="name" type="text" placeholder="e.g. The Gellers' Cup">
             </div>
             <div class="form-group row">
                 <label for="id_e_date" class="col-sm-2 col-form-label">Start Date</label>
-                <input class="form-control" id="id_e_date_end" maxlength="254" name="e_date" type="date">
+                <input class="form-control" id="id_e_date_end" maxlength="254" name="s_date" type="date">
             </div>
             <div class="form-group row">
                 <label for="id_e_date" class="col-sm-2 col-form-label">End Date</label>
@@ -25,11 +25,11 @@
             </div>
             <div class="form-group row">
                 <label for="id_e_place" class="col-sm-2 col-form-label">Place</label>
-                <input class="form-control" id="id_e_place" name="e_place" type="text" placeholder="e.g. Aveiro, Braga Municipal Stadium">
+                <input class="form-control" id="id_e_place" name="place" type="text" placeholder="e.g. Aveiro, Braga Municipal Stadium">
             </div>
             <div class="form-group row">
                 <label for="id_e_mod" class="col-sm-2 col-form-label">Modality</label>
-                <select id="id_e_mod" name="e_mod" class="form-control">
+                <select id="id_e_mod" name="modality" class="form-control">
                     <option selected>Football</option>
                     <option>Volleyball</option>
                     <option>Other</option>
@@ -37,7 +37,7 @@
             </div>
             <div class="form-group row">
                 <label for="id_e_part" class="col-sm-2 col-form-label">Dimension</label>
-                <select id="id_e_part" name="e_part" class="form-control" type="number">
+                <select id="id_e_part" name="participants" class="form-control" type="number">
                     <option selected>Small (1-10 participants)</option>
                     <option>Medium (10-100 participants)</option>
                     <option>Large (100+ participants)</option>
@@ -46,29 +46,21 @@
             
             <div class="form-group row">
                 <label for="id_e_visibility" class="col-sm-2 col-form-label">Visibility</label>
-                <select id="id_e_part" name="e_part" class="form-control" type="number">
+                <select id="id_e_part" name="visibility" class="form-control" type="number">
                     <option selected>Public</option>
                     <option>Private</option>
                 </select>
-                
-                <!-- <form action="eventgen_submit" method="get" accept-charset="utf-8">
-                Private:
-                <input class="form-control" type="radio" name="private" id="e_priv" checked="unchecked" onclick="documen.getElementById('e_pub').checked=false">
-                <br>
-                Public:
-                <input class="form-control" type="radio" name="public" id="e_pub" checked="unchecked" onclick="documen.getElementById('e_priv').checked=false">
-                </form> -->
             </div>
             <div class="form-group row">
                 <label for="id_e_icon" class="col-sm-2 col-form-label">Icon (Soon)</label>
             </div>
             <div class="form-group row">
                 <div class="col-md-offset-2 col-md-10">
-                    <input type="submit" value="Create event" class="btn btn-default" />
+                    <input type="submit" value="Create event" class="btn btn-default" onclick="requirements()"/>
                 </div>
             </div>
             {% if errors %}
-            <p class="validation-summary-errors">Ops, something went wrong!</p>
+            <p class="validation-summary-errors">Missing parameters</p>
             {% endif %}
         </form>
     </section>
@@ -81,4 +73,17 @@
 
 {% block scripts %}
     <script src="static/scripts/jquery.validate.min.js"></script>
+    <script>
+      function requirements() {
+        var form=[];
+        form.push(document.forms["main_form"]["name"]);
+        form.push(document.forms["main_form"]["s_date"]);
+        form.push(document.forms["main_form"]["e_date"]);
+        form.push(document.forms["main_form"]["place"]);
+        form.push(document.forms["main_form"]["modality"]);
+        form.push(document.forms["main_form"]["participants"]);
+        form.push(document.forms["main_form"]["visibility"]);
+        console.log(form);
+        }
+    </script>
 {% endblock %}
