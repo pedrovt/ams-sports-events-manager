@@ -46,7 +46,6 @@ class WebApp(object):
         user = self.get_user()
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         sql = "select password from users where username == '{}'".format(usr)
-        print(sql)
         cur = db_con.execute(sql)
         row = cur.fetchone()
         if row != None:
@@ -56,7 +55,6 @@ class WebApp(object):
 
     def do_authenticationJSON(self, usr, pwd):
         user = self.get_user()
-        print(user)
         db_json = json.load(open(WebApp.dbjson))
         users = db_json['users']
         for u in users:
@@ -68,22 +66,28 @@ class WebApp(object):
         print(WebApp.dbsqlite)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         sql = "insert into users (username,password,is_superuser,email) values ('{}','{}','0','{}')".format(usr,pwd,email)
-        print(sql)
         try:
             cur = db_con.execute(sql)
-            cur = db_con.execute("select * from users")
-            print(cur.fetchall())
             db_con.commit()
             db_con.close()
         except sqlite3.Error as e:
             return e
         return None
 
+<<<<<<< Updated upstream
     ########################################################################################################################
     # Documents Generation
 
     ########################################################################################################################
     # Controllers
+=======
+    def store_eventDB(self, usr, name, date, place, modality, participants, private, icon):
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        sql = "insert into event()"
+
+########################################################################################################################
+#   Controllers
+>>>>>>> Stashed changes
 
     # -------------------------------------------------
     # Initial Pages
@@ -162,10 +166,14 @@ class WebApp(object):
     # -------------------------------------------------
     # Event Management Pages
     @cherrypy.expose
+<<<<<<< Updated upstream
     def create_event(self):
         # TODO this page needs:
         # -> Read info from form and add to DB
 
+=======
+    def create_event(self, name, date, place, mod, participants, visibility):
+>>>>>>> Stashed changes
         print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
