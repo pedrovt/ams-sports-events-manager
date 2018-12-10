@@ -84,7 +84,7 @@ class WebApp(object):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
         table = cur.fetchall()
-        db_con.close();
+        db_con.close()
         lst =[]
         for event in table:
             print(event)
@@ -101,6 +101,21 @@ class WebApp(object):
                 }
             lst.append(e)
         return lst
+
+    def delete_event(self, name):
+        username = self.get_user()['username']
+        sql = "delete from events where name='{}' and team like '%{}%'".format(name, username)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        db_con.close()
+
+    def alter_event(self, name, arg2alter, newarg):
+        username = self.get_user()['username']
+        sql = "update events set {}='{}' where name='{}' and team like '%{}%'".format(arg2alter,newarg,name,username)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        db_con.close()
+
 
 ########################################################################################################################
 #   Controllers
