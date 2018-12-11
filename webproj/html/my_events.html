@@ -8,28 +8,36 @@
     <p><a href="create_event" class="btn btn-primary btn-large">Create a new event &raquo;</a></p>
 </div>
 
-<div class="album py-5 bg-light">
-    <div class="container">
+<div class="card-deck album py-5 bg-light">
+    {% for event in events %}
+    <div class="card">
+        <img class="card-img-top" src="..." alt="THUMBNAIL">
+        
+        <div class="card-body">
+            <h5 class="card-title">{{event}}</h5>
 
-        <div class="row">
-            <div class="col-md-4">
-                <div class="card mb-4 box-shadow">
-                    <img class="card-img-top" data-src="holder.js/100px225?theme=thumb&amp;bg=55595c&amp;fg=eceeef&amp;text=Thumbnail"
-                        alt="Event Thumbnail" style="height: 225px; width: 100%; display: block;" src=""
-                        data-holder-rendered="true">
-                    <div class="card-body">
-                        <p class="card-text">EVENT INFO</p>
-                        <div class="d-flex justify-content-between align-items-center">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-sm btn-outline-secondary" ><a href="event_details">Manage</a></button>
-                            </div>
-                            <small class="text-muted">DATES</small>
-                        </div>
-                    </div>
+            <p class="card-text">
+                <!-- TODO list -->
+                <ul class="list-group">
+                    <li class="list-group-item">Cras justo odio</li>
+                    <li class="list-group-item">Dapibus ac facilisis in</li>
+                    <li class="list-group-item">Morbi leo risus</li>
+                    <li class="list-group-item">Porta ac consectetur ac</li>
+                    <li class="list-group-item">Vestibulum at eros</li>
+                </ul>            
+            </p>
+        </div>
+
+        <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="btn-group">
+                    <button type="button" class="btn btn-sm btn-outline-secondary"><a href="event_details">Manage</a></button>
                 </div>
-            </div>    
+                <small class="text-muted">{{event['start']}} - {{event['end']}}</small>
+            </div>
         </div>
     </div>
+    {% endfor %} 
 </div>
 
 {% endblock %}

@@ -78,7 +78,10 @@ class WebApp(object):
             return e
         return None
 
+    
+
     def get_events(self):
+        # todo select events where participnants are...
         username = self.get_user()['username']
         sql = "select * from events where team like '%{}%'".format(username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
@@ -228,6 +231,7 @@ class WebApp(object):
 
     @cherrypy.expose
     def my_events(self):
+        print("HELLO???\n\n\n\n")
         # TODO this page needs:
         # -> Receive list of events info. Each event is a card
         #   -> Each card needs event name, dates & type
@@ -241,6 +245,7 @@ class WebApp(object):
             return self.render('login.html', tparams)
         else:
             events_list = self.get_events()
+            print(events_list)
             #### Uncomment to check proof 
             #print(events_list)
             #for e in events_list:
@@ -251,7 +256,8 @@ class WebApp(object):
                 'title': 'My Events',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year
+                'year': datetime.now().year,
+                'events': events_list
             }
             return self.render('my_events.html', tparams)
 
