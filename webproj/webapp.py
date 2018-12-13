@@ -70,13 +70,12 @@ class WebApp(object):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         username=self.get_user()['username']
         team = "" + username + ";"
-        sql = "insert into events (creator, team, e_name, s_date, e_date, place, modality, participants, visibility,icon) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}')".format(username,team,name,s_date,e_date,place,modality,participants,False if visibility=='Private' else True, icon if icon else None)
+        sql = "insert into events (creator, team, e_name, s_date, e_date, place, modality, participants, visibility,icon,inscriptions) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','')".format(username,team,name,s_date,e_date,place,modality,participants,False if visibility=='Private' else True, icon if icon else None)
         try:
             cur = db_con.execute(sql)
             db_con.commit()
             db_con.close()
         except sqlite3.Error as e:
-            print('error in here')
             return e
         return None
 
@@ -90,7 +89,6 @@ class WebApp(object):
         db_con.close()
         lst =[]
         for event in table:
-            print(event)
             e = {
                 'creator':event[1],
                 'management':event[2],
@@ -119,20 +117,56 @@ class WebApp(object):
         sql = "update events set {}='{}' where e_name='{}' and team like '%{}%'".format(arg2alter,newarg,name,username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
+        db_con.commit()
         db_con.close()
 
     def get_inscriptions(self, name):
-        get_event_sql = "select inscriptions from events where and name='{}'".format(name)
+        get_event_sql = "select inscriptions from events where and e_name='{}'".format(name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
-        event_lst = cur.fetchall()
+        insc_lst = cur.fetchall()[0][0]
         db_con.close()
-        return event_lst
+        return insc_lst
 
     def add_inscription(self, e_name, insc_name):
         usr = self.get_user()['username']
-#        inscs = 
+        get_sql = "select * from events where e_name='{}'".format(e_name)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(get_sql)
+        event = cur.fetchall()[0]
+        print(event)
+        management = event[2]
+        insc_lst = event[-2]
+        if usr not in management:
+            return "Error: Not a manager, can't add participants"
+        if not insc_lst:
+            insc_lst = insc_name + ","
+        else:
+            insc_lst += insc_name + ","
+        put_sql = "update events set inscriptions='{}' where e_name='{}'".format(insc_lst, e_name)
+        db_con.execute(put_sql)
+        db_con.commit()
+        db_con.close()
 
+    def usr_exists(self, name):
+        sql = "select * from users where name='{}'".format(name)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        name = cur.fetchall()
+        db_con.close()
+        if not name:
+            return False
+        return True
+
+    def event_exists(self, name):
+        sql = "select * from events where name='{}'".format(name)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        name = cur.fetchall()
+        db_con.close()
+        if not name:
+            return False
+        return True
 
 ########################################################################################################################
 #   Controllers
@@ -185,7 +219,6 @@ class WebApp(object):
 
     @cherrypy.expose
     def signup(self, username=None, password=None, mail=None):
-        print(username, password, mail)
         if username == None:
             tparams = {
                 'title': 'Sign up',
@@ -251,7 +284,6 @@ class WebApp(object):
 
     @cherrypy.expose
     def my_events(self):
-        print("HELLO???\n\n\n\n")
         # TODO this page needs:
         # -> Receive list of events info. Each event is a card
         #   -> Each card needs event name, dates & type
@@ -265,13 +297,6 @@ class WebApp(object):
             return self.render('login.html', tparams)
         else:
             events_list = self.get_events()
-            print(events_list)
-            #### Uncomment to check proof 
-            #print(events_list)
-            #for e in events_list:
-            #    print('event:')
-            #    for key in e.keys():
-            #        print('\t',key,' : ',e[key])
             tparams = {
                 'title': 'My Events',
                 'errors': False,
@@ -312,14 +337,13 @@ class WebApp(object):
     # -------------------------------------------------
     # Add Info Pages
     @cherrypy.expose
-    def add_participants(self):
+    def add_participants(self, e_name=None, insc=None):
         # TODO this page needs:
         # -> If there's no user, return error
         # -> Else, add participant
         # -> If Add More, redirect to the same page
         # -> Else, redirect to event_details
 
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
                 'title': 'Login',
@@ -329,13 +353,15 @@ class WebApp(object):
             }
             return self.render('login.html', tparams)
         else:
-            tparams = {
-                'title': 'Add Participants',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('add_participants.html', tparams)
+            if not e_name:
+                tparams = {
+                    'title': 'Add Participants',
+                    'errors': False,
+                    'user': self.get_user(),
+                    'year': datetime.now().year
+                }
+                return self.render('add_participants.html', tparams)
+            
 
     @cherrypy.expose
     def add_results(self):
