@@ -3,7 +3,7 @@
 
 archives/*
 webproj/data/db.sqlite3
-webproj/__pycache__/*
+webproj/__pycache__/
 webproj/.idea/*
 webproj/html/todo*
 *.pyc

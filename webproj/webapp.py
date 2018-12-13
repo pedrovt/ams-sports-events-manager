@@ -4,6 +4,7 @@ import sqlite3
 from datetime import datetime
 from sqlite3 import Error
 
+import requests
 import cherrypy
 from jinja2 import Environment, PackageLoader, select_autoescape
 
@@ -75,10 +76,9 @@ class WebApp(object):
             db_con.commit()
             db_con.close()
         except sqlite3.Error as e:
+            print('error in here')
             return e
         return None
-
-    
 
     def get_events(self):
         # todo select events where participnants are...
@@ -91,33 +91,47 @@ class WebApp(object):
         lst =[]
         for event in table:
             print(event)
-            e = {'creator':event[1],
-                 'management':event[2],
-                 'name':event[3],
-                 'start':event[4],
-                 'end':event[5],
-                 'place':event[6],
-                 'modality':event[7],
-                 'participants':event[8],
-                 'visible':event[9],
-                 'icon_path':event[10]
+            e = {
+                'creator':event[1],
+                'management':event[2],
+                'name':event[3],
+                'start':event[4],
+                'end':event[5],
+                'place':event[6],
+                'modality':event[7],
+                'participants':event[8],
+                'visible':event[9],
+                'icon_path':event[10],
+                'inscriptions':event[11]
                 }
             lst.append(e)
         return lst
 
     def delete_event(self, name):
         username = self.get_user()['username']
-        sql = "delete from events where name='{}' and team like '%{}%'".format(name, username)
+        sql = "delete from events where e_name='{}' and team like '%{}%'".format(name, username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
         db_con.close()
 
     def alter_event(self, name, arg2alter, newarg):
         username = self.get_user()['username']
-        sql = "update events set {}='{}' where name='{}' and team like '%{}%'".format(arg2alter,newarg,name,username)
+        sql = "update events set {}='{}' where e_name='{}' and team like '%{}%'".format(arg2alter,newarg,name,username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
         db_con.close()
+
+    def get_inscriptions(self, name):
+        get_event_sql = "select inscriptions from events where and name='{}'".format(name)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        event_lst = cur.fetchall()
+        db_con.close()
+        return event_lst
+
+    def add_inscription(self, e_name, insc_name):
+        usr = self.get_user()['username']
+#        inscs = 
 
 
 ########################################################################################################################
@@ -211,23 +225,29 @@ class WebApp(object):
                 'year' : datetime.now().year
             } 
             return self.render('login.html', tparams)
-        elif not name or not s_date or not e_date or not place or not modality or not participants or not visibility:
-            tparams = {
-                'title': 'Create an Event',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('create_event.html', tparams)
         else:
-            tparams = {
-                'title': 'Successful Event creation',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            self.create_eventDB(name, s_date, e_date, place, modality, participants, visibility, icon)
-            return self.render('create_documents.html', tparams)
+            # it always has participants so it is the way to check if it's first time accessign page
+            if not participants:
+                tparams = {
+                    'title': 'Event creation Page',
+                    'errors': False,
+                    'user': self.get_user(),
+                    'year': datetime.now().year,
+                }
+                return self.render('create_event.html', tparams)
+               
+            e = self.create_eventDB(name, s_date, e_date, place, modality, participants, visibility, icon)
+            # send error to print in web UI
+            if e:
+                tparams = {
+                    'title': 'Failed Event creation',
+                    'errors': True,
+                    'user': self.get_user(),
+                    'year': datetime.now().year,
+                    'error': e
+                }
+                return self.render('create_event.html', tparams)
+            raise cherrypy.HTTPRedirect('/my_events')
 
     @cherrypy.expose
     def my_events(self):
@@ -342,7 +362,7 @@ class WebApp(object):
             return self.render('add_results.html', tparams)
 
     @cherrypy.expose
-    def create_documents():
+    def create_documents(self, name=None, s_date=None, e_date=None, place=None, modality=None, participants=None, visibility=None, icon=None):
         # TODO this page needs:
         # -> When Create Documents is pressed
         # -> For each card:
