@@ -134,7 +134,6 @@ class WebApp(object):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(get_sql)
         event = cur.fetchall()[0]
-        print(event)
         management = event[2]
         insc_lst = event[-2]
         if usr not in management:
@@ -310,8 +309,6 @@ class WebApp(object):
     def event_details(self):
         # TODO this page needs:
         # -> Receive all event info to put in card About your event
-
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
                 'title': 'Login',
