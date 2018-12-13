@@ -309,6 +309,14 @@ class WebApp(object):
     def event_details(self):
         # TODO this page needs:
         # -> Receive all event info to put in card About your event
+        
+        # get event name from selected card
+        info_length = int(cherrypy.request.headers['Content-Length'])
+        raw_body = cherrypy.request.body.read(info_length)
+        event_name = raw_body.decode()
+        cherrypy.log("EVENT_DETAILS\tEvent Name " + str(event_name))
+        
+        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             tparams = {
                 'title': 'Login',
@@ -322,14 +330,10 @@ class WebApp(object):
                 'title': 'Event Details',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year
+                'year': datetime.now().year,
+                'event': event_name
             }
             return self.render('event_details.html', tparams)
-    
-    @cherrypy.expose
-    def delete_event(self):
-        # TODO 
-        pass
 
     # -------------------------------------------------
     # Add Info Pages

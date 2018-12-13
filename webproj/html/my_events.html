@@ -8,32 +8,53 @@
     <p><a href="create_event" class="btn btn-primary btn-large">Create a new event &raquo;</a></p>
 </div>
 
+
+
 <div class="card-deck album py-5 bg-light">
     {% for event in events %}
     <div class="card">
-        <img class="card-img-top" src="..." alt="THUMBNAIL">
+        
+        <img class="card-img-top" src="{{events['icon_path']}}" alt="{{events['icon_path']}}">
         
         <div class="card-body">
-            <h5 class="card-title">{{event}}</h5>
-
+            <h5 class="card-title" id="event_name">{{event['name']}}</h5>
             <p class="card-text">
-                <!-- TODO list -->
-                <ul class="list-group">
-                    <li class="list-group-item">Cras justo odio</li>
-                    <li class="list-group-item">Dapibus ac facilisis in</li>
-                    <li class="list-group-item">Morbi leo risus</li>
-                    <li class="list-group-item">Porta ac consectetur ac</li>
-                    <li class="list-group-item">Vestibulum at eros</li>
-                </ul>            
+                {{event['modality']}}
+            </p>
+            <p class="card-text">
+                {{event['participants']}}
             </p>
         </div>
+        
+        <script>
+            function send_event_name() {
+                event_name = document.getElementById("event_name").innerHTML;
+        
+                console.log("Event Name is " + event_name);
+
+                $.ajax({
+                            url: "event_details",
+                            type: "POST",
+                            data: event_name,
+                            contentType: "application/json",
+                            dataType: "json",
+                            success: function () {
+                                //
+                            }
+                        });
+
+                
+            };
+        </script>
 
         <div class="card-footer">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                    <button type="button" class="btn btn-sm btn-outline-secondary"><a href="event_details">Manage</a></button>
+                    <button action="event_details" type="button" method="post" class="btn btn-sm btn-outline-secondary" onclick="send_event_name()" href="event_details" name="event_manage_name" id="event_name" >
+                        Manage</button>
                 </div>
-                <small class="text-muted">{{event['start']}} - {{event['end']}}</small>
+                <small class="text-muted">{{event['start']}} - {{event['end']}}
+                </small>
             </div>
         </div>
     </div>
@@ -44,5 +65,8 @@
 
 
 {% block scripts %}
-    <script src="static/scripts/jquery.validate.min.js"></script>
+   
+    
+
+
 {% endblock %}
