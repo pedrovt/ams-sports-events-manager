@@ -33,6 +33,7 @@ class WebApp(object):
         return cherrypy.session['user']
 
     def render(self, tpg, tps):
+        print('rendering', tpg)
         template = self.env.get_template(tpg)
         return template.render(tps)
 
@@ -250,13 +251,7 @@ class WebApp(object):
         #TODO:
         # -> throw exception when event has something missing
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title' : 'Login',
-                'errors' : False,
-                'user' : self.get_user(),
-                'year' : datetime.now().year
-            } 
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             # it always has participants so it is the way to check if it's first time accessign page
             if not participants:
@@ -287,13 +282,7 @@ class WebApp(object):
         # -> Receive list of events info. Each event is a card
         #   -> Each card needs event name, dates & type
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title' : 'Login',
-                'errors' : False,
-                'user' : self.get_user(),
-                'year' : datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             events_list = self.get_events()
             tparams = {
@@ -307,25 +296,13 @@ class WebApp(object):
 
     @cherrypy.expose
     def event_details(self):
-        # TODO this page needs:
-        # -> Receive all event info to put in card About your event
-        
-        # get event name from selected card
-        info_length = int(cherrypy.request.headers['Content-Length'])
-        raw_body = cherrypy.request.body.read(info_length)
-        event_name = raw_body.decode()
-        cherrypy.log("EVENT_DETAILS\tEvent Name " + str(event_name))
-        
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title': 'Login',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
+            info_length = int(cherrypy.request.headers['Content-Length'])
+            raw_body = cherrypy.request.body.read(info_length)
+            event_name = raw_body.decode()
+            print("EVENT_DETAILS\tEvent Name:",event_name)
             tparams = {
                 'title': 'Event Details',
                 'errors': False,
@@ -333,6 +310,7 @@ class WebApp(object):
                 'year': datetime.now().year,
                 'event': event_name
             }
+            print(tparams,'ahahahah')
             return self.render('event_details.html', tparams)
 
     # -------------------------------------------------
@@ -344,15 +322,8 @@ class WebApp(object):
         # -> Else, add participant
         # -> If Add More, redirect to the same page
         # -> Else, redirect to event_details
-
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title': 'Login',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             if not e_name:
                 tparams = {
@@ -372,13 +343,7 @@ class WebApp(object):
 
         #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title': 'Login',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             tparams = {
                 'title': 'Add Results',
@@ -389,20 +354,14 @@ class WebApp(object):
             return self.render('add_results.html', tparams)
 
     @cherrypy.expose
-    def create_documents(self, name=None, s_date=None, e_date=None, place=None, modality=None, participants=None, visibility=None, icon=None):
+    def create_documents(self):
         # TODO this page needs:
         # -> When Create Documents is pressed
         # -> For each card:
         #   -> If Create is selected, read info (if needed)
         #      apply it to the LaTeX document and save to the db
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title': 'Login',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             tparams = {
                 'title': 'Create Documents',
@@ -418,16 +377,8 @@ class WebApp(object):
     def see_participants(self):
         # TODO this page needs:
         # -> For each participant/list item: username and email
-
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title': 'Login',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             tparams = {
                 'title': 'Participants',
@@ -441,16 +392,8 @@ class WebApp(object):
     def see_results(self):
         # TODO this page needs:
         # -> For each result/list item: participant name, result and date
-        
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title': 'Login',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             tparams = {
                 'title': 'Results',
@@ -464,15 +407,8 @@ class WebApp(object):
     def see_documents(self):
         # TODO this page needs:
         # -> For each document/list item: name, type and link
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
-            tparams = {
-                'title': 'Login',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year
-            }
-            return self.render('login.html', tparams)
+            raise cherrypy.HTTPRedirect('/login')
         else:
             tparams = {
                 'title': 'Documents',
