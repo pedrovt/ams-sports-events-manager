@@ -159,7 +159,7 @@ class WebApp(object):
         return True
 
     def event_exists(self, name):
-        sql = "select * from events where name='{}'".format(name)
+        sql = "select * from events where e_name='{}'".format(name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
         name = cur.fetchall()
@@ -167,6 +167,27 @@ class WebApp(object):
         if not name:
             return False
         return True
+    
+    def get_event_details(self, name):
+        sql = "select * from events where e_name='{}'".format(name)
+        db_con.WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        event = cur.fetchall()[0]
+        db_con.close()
+        e = {
+            'creator':event[1],
+            'management':event[2],
+            'name':event[3],
+            'start':event[4],
+            'end':event[5],
+            'place':event[6],
+            'modality':event[7],
+            'participants':event[8],
+            'visible':event[9],
+            'icon_path':event[10],
+            'inscriptions':event[11]
+            }
+        return e
 
 ########################################################################################################################
 #   Controllers
@@ -303,12 +324,13 @@ class WebApp(object):
             raw_body = cherrypy.request.body.read(info_length)
             event_name = raw_body.decode()
             print("EVENT_DETAILS\tEvent Name:",event_name)
+            details = self.get_event_details(event_name)
             tparams = {
                 'title': 'Event Details',
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year,
-                'event': event_name
+                'details': details
             }
             print(tparams,'ahahahah')
             return self.render('event_details.html', tparams)
