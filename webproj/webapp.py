@@ -170,10 +170,11 @@ class WebApp(object):
     
     def get_event_details(self, name):
         sql = "select * from events where e_name='{}'".format(name)
-        db_con.WebApp.db_connection(WebApp.dbsqlite)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
         event = cur.fetchall()[0]
         db_con.close()
+        # TODO get docs, participants and results count
         e = {
             'creator':event[1],
             'management':event[2],
@@ -316,15 +317,21 @@ class WebApp(object):
             return self.render('my_events.html', tparams)
 
     @cherrypy.expose
-    def event_details(self):
+    def event_details(self, e_name=None):
+
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
+        elif not e_name:
+            tparams = {
+                'title': 'Event Details',
+                'errors': True,
+                'user': self.get_user(),
+                'year': datetime.now().year,
+            }
+            return self.render('event_details.html', tparams)
         else:
-            info_length = int(cherrypy.request.headers['Content-Length'])
-            raw_body = cherrypy.request.body.read(info_length)
-            event_name = raw_body.decode()
-            print("EVENT_DETAILS\tEvent Name:",event_name)
-            details = self.get_event_details(event_name)
+            print("EVENT_DETAILS\tEvent Name:", e_name)
+            details = self.get_event_details(e_name)
             tparams = {
                 'title': 'Event Details',
                 'errors': False,
@@ -332,7 +339,6 @@ class WebApp(object):
                 'year': datetime.now().year,
                 'details': details
             }
-            print(tparams,'ahahahah')
             return self.render('event_details.html', tparams)
 
     # -------------------------------------------------

@@ -3,22 +3,29 @@
 {% block content %}
 
 <div class="jumbotron" style="background-image: url(static/images/header_level2.png); color:white">
-    <h1>{{ title }}</h1>
+    <h1>{{details['name']}} {{ title }}</h1>
     <p class="lead">Details of Your Event</p>
     <p><a href="my_events" class="btn btn-primary btn-large">Go back to your events &raquo;</a></p>
 </div>
 
 <div class="card-group">
+    <!-- About your event -->
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">About your event</h5>
-            {{event}}
+            
             <!-- Event Info -->
-            <p class=card-text>PLACE</p>
-            <p class=card-text>MODALITY</li>
-            <p class=card-text>SIZE</li>
-            <p class=card-text>VISIBILITY</li>
-
+            <p class=card-text>From {{details['start']}} to {{details['end']}}</li>
+            <p class=card-text>At {{details['place']}}</p>
+            <p class=card-text>{{details['modality']}}</li>
+            <p class=card-text>{{details['participants']}}</li>
+            
+            <!-- Visibility -->
+            {% if details['visible']=='True' %}
+            <p class=card-text>Public Event</li>
+            {% else %}
+            <p class=card-text>Private Event</li>
+            {% endif %}
         </div>
         <div class="card-footer">
             <p class="card-text"><small class="text-muted"><a href="#" class="list-group-item list-group-item-action">Edit Information (Soon)</a></small></p>
@@ -26,20 +33,24 @@
         </div>
     </div>
 
+    <!-- Documents -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Documents</h5>
+            <h5 class="card-title">Documents<span class="badge">7</span></h5>
             <p class="card-text">Create or consult the documents you generated.</p>
-        </div>
+            </div>
         <div class="card-footer">
-            <p class="card-text"><small class="text-muted"><a href="create_documents" class="list-group-item list-group-item-action">Create Documents</a></small></p>
-            <p class="card-text"><small class="text-muted"><a href="see_documents" class="list-group-item list-group-item-action">See Documents</a></small></p>
+            <p class="card-text"><small class="text-muted"><a href="create_documents" class="list-group-item list-group-item-action">Create
+                        Documents</a></small></p>
+            <p class="card-text"><small class="text-muted"><a href="see_documents" class="list-group-item list-group-item-action">See
+                        Documents</a></small></p>
+            </div>
         </div>
-    </div>
-
+    
+    <!-- Participants -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Participants</h5>
+            <h5 class="card-title">Participants<span class="badge">7</span></h5>
             <p class="card-text">Add or consult your event's participants.</p>
         </div>
         
@@ -49,9 +60,10 @@
         </div>
     </div>
 
-     <div class="card">
+    <!-- Results -->
+    <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Results</h5>
+            <h5 class="card-title">Results<span class="badge">7</span></h5>
             <p class="card-text">Add (or update automatically) and consult your event's results.</p>
         </div>
         
@@ -60,7 +72,6 @@
             <p class="card-text"><small class="text-muted"><a href="see_results" class="list-group-item list-group-item-action">See Results</a></small></p>
         </div>
     </div>
-
 
 </div>
 

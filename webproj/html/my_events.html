@@ -23,25 +23,14 @@
                 {{event['participants']}}
             </p>
         </div>
-        
-        <script>
-            function send_event_name(event_name) {
-              event_name = document.getElementById("event_"+event_name).innerHTML;
-              console.log("Event Name is " + event_name);
-              $.ajax({
-                      url: "event_details",
-                      type: "POST",
-                      data: event_name,
-                      contentType: "application/json",
-                      dataType: "json",
-                    });
-            };
-        </script>
-
+       
         <div class="card-footer">
             <div class="d-flex justify-content-between align-items-center">
                 <div class="btn-group">
-                  <button action="event_details" type="button" method="post" class="btn btn-sm btn-outline-secondary" onclick="send_event_name({{event['name']}})" href="event_details" name="event_manage_name" id="event_name" >Manage</button>
+                    <form method="get" action="event_details">
+                        <input type="hidden" value="{{event['name']}}" name="e_name" />
+                        <button type="submit" class="btn btn-sm btn-outline-secondary">Manage</button>
+                    </form>
                 </div>
                 <small class="text-muted">{{event['start']}} - {{event['end']}}
                 </small>
