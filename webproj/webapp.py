@@ -122,7 +122,7 @@ class WebApp(object):
         db_con.close()
 
     def get_inscriptions(self, name):
-        get_event_sql = "select inscriptions from events where and e_name='{}'".format(name)
+        sql = "select inscriptions from events where e_name='{}'".format(name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
         insc_lst = cur.fetchall()[0][0]
@@ -190,10 +190,13 @@ class WebApp(object):
             }
         return e
 
-########################################################################################################################
+################################################################################
+################################################################################
 #   Controllers
 
-    # -------------------------------------------------
+    # ##########################################################################
+    # ##########################################################################
+    # ##########################################################################
     # Initial Pages
     @cherrypy.expose
     def index(self):
@@ -214,7 +217,9 @@ class WebApp(object):
         }
         return self.render('about.html', tparams)
 
-    # -------------------------------------------------
+    # ##########################################################################
+    # ##########################################################################
+    # ##########################################################################
     # Authentication
     @cherrypy.expose
     def login(self, username=None, password=None):
@@ -266,7 +271,9 @@ class WebApp(object):
         self.set_user()
         raise cherrypy.HTTPRedirect("/")
     
-    # -------------------------------------------------
+    # ##########################################################################
+    # ##########################################################################
+    # ##########################################################################
     # Event Management Pages
     @cherrypy.expose
     def create_event(self, name=None, s_date=None, e_date=None, place=None, modality=None, participants=None, visibility=None, icon=None):
@@ -318,7 +325,6 @@ class WebApp(object):
 
     @cherrypy.expose
     def event_details(self, e_name=None):
-
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         elif not e_name:
@@ -341,7 +347,9 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
 
-    # -------------------------------------------------
+    # ##########################################################################
+    # ##########################################################################
+    # ##########################################################################
     # Add Info Pages
     @cherrypy.expose
     def add_participants(self, e_name=None, insc=None):
@@ -353,12 +361,13 @@ class WebApp(object):
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         else:
-            if not e_name:
+            if e_name:
                 tparams = {
                     'title': 'Add Participants',
                     'errors': False,
                     'user': self.get_user(),
-                    'year': datetime.now().year
+                    'year': datetime.now().year,
+                    'participants': self.get_inscriptions(e_name)
                 }
                 return self.render('add_participants.html', tparams)
             
@@ -399,7 +408,9 @@ class WebApp(object):
             }
             return self.render('create_documents.html', tparams)
 
-    # -------------------------------------------------
+    # ##########################################################################
+    # ##########################################################################
+    # ##########################################################################
     # See Info Pages
     @cherrypy.expose
     def see_participants(self):
@@ -450,6 +461,9 @@ class WebApp(object):
     def shut(self):
         cherrypy.engine.exit()
 
+    # ##########################################################################
+    # ##########################################################################
+    # ##########################################################################
     
 if __name__ == '__main__':
     baseDir = os.path.dirname(os.path.abspath(__file__))

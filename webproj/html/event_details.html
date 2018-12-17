@@ -12,21 +12,23 @@
     <!-- About your event -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">About your event</h5>
-            
-            <!-- Event Info -->
-            <p class=card-text>From {{details['start']}} to {{details['end']}}</li>
-            <p class=card-text>At {{details['place']}}</p>
-            <p class=card-text>{{details['modality']}}</li>
-            <p class=card-text>{{details['participants']}}</li>
-            
+            <h5 class="card-title">About your event</h5>    
+        </div>
+        
+        <!-- Event Info -->
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item">From {{details['start']}} to {{details['end']}}</li>
+            <li class="list-group-item">At {{details['place']}}</li>
+            <li class="list-group-item">{{details['modality']}}</li>
+            <li class="list-group-item">{{details['participants']}}</li>
             <!-- Visibility -->
             {% if details['visible']=='True' %}
-            <p class=card-text>Public Event</li>
+            <li class="list-group-item">Public Event</li>
             {% else %}
-            <p class=card-text>Private Event</li>
+            <li class="list-group-item">Private Event</li>
             {% endif %}
-        </div>
+        </ul>
+
         <div class="card-footer">
             
             <p class="card-text">
