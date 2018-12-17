@@ -33,7 +33,6 @@ class WebApp(object):
         return cherrypy.session['user']
 
     def render(self, tpg, tps):
-        print('rendering', tpg)
         template = self.env.get_template(tpg)
         return template.render(tps)
 
@@ -326,7 +325,6 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
         else:
-            print("EVENT_DETAILS\tEvent Name:", e_name)
             details = self.get_event_details(e_name)
             tparams = {
                 'title': 'Event Details',
