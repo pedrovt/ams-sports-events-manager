@@ -5,8 +5,12 @@
 <div class="jumbotron" style="background-image: url(static/images/header_level1.png); color:white">
     <h1>The CityRunning Project</h1>
     <p class="lead">Sports Events Made Easy</p>
-    <p>
-        <a href="login" class="btn btn-primary btn-large">Let's Start &raquo;</a>
+    <p> 
+        {% if user.is_authenticated %}
+            <a href="my_events" class="btn btn-primary btn-large">Welcome Back! &raquo;</a>
+        {% else %}
+            <a href="login" class="btn btn-primary btn-large">Let's Start &raquo;</a>
+        {% endif %}
         <a href="https://pedroteix.wixsite.com/city-running" class="btn btn-secondary btn-large">Learn more &raquo;</a>
     </p>
 </div>

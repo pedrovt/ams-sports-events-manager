@@ -28,8 +28,20 @@
             {% endif %}
         </div>
         <div class="card-footer">
-            <p class="card-text"><small class="text-muted"><a href="#" class="list-group-item list-group-item-action">Edit Information (Soon)</a></small></p>
-            <p class="card-text"><small class="text-muted"><a href="delete_event" class="list-group-item list-group-item-action">Delete Event</a></small></p>
+            
+            <p class="card-text">
+                <form method="get" action="edit_event">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm btn-primary" disabled>Edit Information</button>
+                </form>
+            </p>
+            
+            <p class="card-text">
+                <form method="get" action="delete_event">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm ">Delete Event</button>
+                </form>
+            </p>
         </div>
     </div>
 
@@ -40,23 +52,45 @@
             <p class="card-text">Create or consult the documents you generated.</p>
             </div>
         <div class="card-footer">
-            <p class="card-text"><small class="text-muted"><a href="create_documents" class="list-group-item list-group-item-action">Create
-                        Documents</a></small></p>
-            <p class="card-text"><small class="text-muted"><a href="see_documents" class="list-group-item list-group-item-action">See
-                        Documents</a></small></p>
-            </div>
+            <p class="card-text">
+                <form method="get" action="create_documents">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm btn-primary">Create Documents</button>
+                </form>
+            </p>
+            
+            <p class="card-text">
+                <form method="get" action="see_documents">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm ">See
+                    Documents</button>
+                </form>
+            </p>
         </div>
+    </div>
     
     <!-- Participants -->
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Participants<span class="badge">7</span></h5>
-            <p class="card-text">Add or consult your event's participants.</p>
+            <p class="card-text">Add or view your event's participants.</p>
         </div>
         
         <div class="card-footer">
-            <p class="card-text"><small class="text-muted"><a href="add_participants" class="list-group-item list-group-item-action">Add Participants</a></small></p>
-            <p class="card-text"><small class="text-muted"><a href="see_participants" class="list-group-item list-group-item-action">See Participants</a></small></p>
+            <p class="card-text">
+                <form method="get" action="add_participants">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm btn-primary">Add Participants</button>
+                </form>
+            </p>
+            
+            <p class="card-text">
+                <form method="get" action="see_participants">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm ">See Participants</button>
+                </form>
+            </p>
+
         </div>
     </div>
 
@@ -68,8 +102,19 @@
         </div>
         
         <div class="card-footer">
-            <p class="card-text"><small class="text-muted"><a href="add_results" class="list-group-item list-group-item-action">Add Results</a></small></p>
-            <p class="card-text"><small class="text-muted"><a href="see_results" class="list-group-item list-group-item-action">See Results</a></small></p>
+            <p class="card-text">
+                <form method="get" action="add_results">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm btn-primary">Add Results</button>
+                </form>
+            </p>
+            
+            <p class="card-text">
+                <form method="get" action="see_results">
+                    <input type="hidden" value="{{details['name']}}" name="e_name" />
+                    <button type="submit" class="btn btn-sm ">See Results</button>
+                </form>
+            </p>
         </div>
     </div>
 

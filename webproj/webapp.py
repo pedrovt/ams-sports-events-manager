@@ -453,7 +453,8 @@ class WebApp(object):
     
 if __name__ == '__main__':
     baseDir = os.path.dirname(os.path.abspath(__file__))
-    print("Dir is " + str(baseDir))
+    cherrypy.log("The City Running Project")
+    cherrypy.log("Dir is " + str(baseDir))
     conf = {
         '/': {
             'tools.sessions.on': True,
