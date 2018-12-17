@@ -190,12 +190,6 @@ class WebApp(object):
             }
         return e
 
-################################################################################
-################################################################################
-#   Controllers
-
-    # ##########################################################################
-    # ##########################################################################
     # ##########################################################################
     # Initial Pages
     @cherrypy.expose
@@ -217,8 +211,6 @@ class WebApp(object):
         }
         return self.render('about.html', tparams)
 
-    # ##########################################################################
-    # ##########################################################################
     # ##########################################################################
     # Authentication
     @cherrypy.expose
@@ -271,8 +263,6 @@ class WebApp(object):
         self.set_user()
         raise cherrypy.HTTPRedirect("/")
     
-    # ##########################################################################
-    # ##########################################################################
     # ##########################################################################
     # Event Management Pages
     @cherrypy.expose
@@ -348,8 +338,6 @@ class WebApp(object):
             return self.render('event_details.html', tparams)
 
     # ##########################################################################
-    # ##########################################################################
-    # ##########################################################################
     # Add Info Pages
     @cherrypy.expose
     def add_participants(self, e_name=None, insc=None):
@@ -373,7 +361,7 @@ class WebApp(object):
             
 
     @cherrypy.expose
-    def add_results(self):
+    def add_results(self, e_name=None):
         # TODO this page needs:
         # -> If Add Result is pressed, add result and return to event_details
         # -> Else, fetch results from dummy sensor (JSON based?), return error 
@@ -391,7 +379,7 @@ class WebApp(object):
             return self.render('add_results.html', tparams)
 
     @cherrypy.expose
-    def create_documents(self):
+    def create_documents(self, e_name=None):
         # TODO this page needs:
         # -> When Create Documents is pressed
         # -> For each card:
@@ -409,11 +397,9 @@ class WebApp(object):
             return self.render('create_documents.html', tparams)
 
     # ##########################################################################
-    # ##########################################################################
-    # ##########################################################################
     # See Info Pages
     @cherrypy.expose
-    def see_participants(self):
+    def see_participants(self, e_name=None):
         # TODO this page needs:
         # -> For each participant/list item: username and email
         if not self.get_user()['is_authenticated']:
@@ -428,7 +414,7 @@ class WebApp(object):
             return self.render('see_participants.html', tparams)
 
     @cherrypy.expose
-    def see_results(self):
+    def see_results(self, e_name=None):
         # TODO this page needs:
         # -> For each result/list item: participant name, result and date
         if not self.get_user()['is_authenticated']:
@@ -443,7 +429,7 @@ class WebApp(object):
             return self.render('see_results.html', tparams)
 
     @cherrypy.expose
-    def see_documents(self):
+    def see_documents(self, e_name=None):
         # TODO this page needs:
         # -> For each document/list item: name, type and link
         if not self.get_user()['is_authenticated']:
@@ -462,8 +448,14 @@ class WebApp(object):
         cherrypy.engine.exit()
 
     # ##########################################################################
-    # ##########################################################################
-    # ##########################################################################
+    # Error pages
+    @cherrypy.expose
+    def error_404(self):
+        pass
+
+    @cherrypy.expose
+    def error_500(self):
+        pass
     
 if __name__ == '__main__':
     baseDir = os.path.dirname(os.path.abspath(__file__))
