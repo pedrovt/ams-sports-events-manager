@@ -157,8 +157,15 @@ class WebApp(object):
         sql = "select inscriptions from events where e_name='{}'".format(name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
-        insc_lst = cur.fetchall()[0][0]
+        insc_str = cur.fetchall()[0][0]
         db_con.close()
+        
+        try:
+            insc_lst = insc_str.split(PEOPLE_SEPARATOR)
+            insc_lst.remove('')
+        except ValueError:
+            print("Internal Error while removing '' name")
+        
         return insc_lst
 
     def add_inscription(self, e_name, insc_name):
@@ -412,12 +419,20 @@ class WebApp(object):
     # ##########################################################################
     # Add Info Pages
     @cherrypy.expose
-    def add_participants(self, e_name=None, insc=None):
+    def add_participants(self, e_name=None, participant_username=None, more=None):
         # TODO this page needs:
         # -> If there's no user, return error
         # -> Else, add participant
         # -> If Add More, redirect to the same page
         # -> Else, redirect to event_details
+
+        # TODO December 18
+        # when participant_username!= None:
+        #   add inscription
+        #   if more = True
+        #     redirect to add_participants(e_name)
+        #   else redirect to event details
+
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         else:
@@ -427,6 +442,7 @@ class WebApp(object):
                     'errors': False,
                     'user': self.get_user(),
                     'year': datetime.now().year,
+                    'e_name': e_name,
                     'participants': self.get_inscriptions(e_name)
                 }
                 return self.render('add_participants.html', tparams)
@@ -511,11 +527,16 @@ class WebApp(object):
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         else:
+            # documents = self.get_event_documents()
+            # for debug purposes 
+            documents = [{'name': 'NAME', 'type': 'HEALTH', 'path': 'URL'}, {
+                'name': 'NAME1', 'type': 'HEALTH', 'path': 'URL'}]
             tparams = {
                 'title': 'Documents',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year
+                'year': datetime.now().year,
+                'documents': documents
             }
             return self.render('see_documents.html', tparams)
 
