@@ -8,6 +8,7 @@ import requests
 import cherrypy
 from jinja2 import Environment, PackageLoader, select_autoescape
 
+from documents.doc_gen import *
 
 class WebApp(object):
     dbsqlite = 'data/db.sqlite3'
@@ -184,10 +185,41 @@ class WebApp(object):
             'modality':event[7],
             'participants':event[8],
             'visible':event[9],
-            'icon_path':event[10],
-            'inscriptions':event[11]
+            'icon_path':event[11],
+            'inscriptions':event[10]
             }
         return e
+    
+    def gen_event_doc(self, name, entity_list, self_doc=False, doctype='Security'):
+        details = self.get_event_details(name)
+        admin = self.get_user()['username'] if self_doc else 'A equipa de gestão do evento'
+        icon = details['icon_path'] if details['icon_path'] != 'None' else '../static/images/logo.png'
+        if doctype=='Security':
+            path = security_docs(entity_list=entity_list,event=name,icon_path=icon,dates=(details['start'],details['end']),place=details['place'],admin_name=admin)
+        elif doctype=='Health':
+            path = health_docs(entity_list=entity_list,event=name,icon_path=icon,dates=(details['start'],details['end']),place=details['place'],admin_name=admin)
+        elif doctype=='Sponsors':
+            path = sponsors_docs(entity_list=entity_list,event=name,icon_path=icon,dates=(details['start'],details['end']),place=details['place'],admin_name=admin)
+        path = os.path.join(os.getcwd(),os.path.basename(path))
+        db_path = os.getcwd() + '/events_docs_db/' + name
+        if not os.path.exists(db_path):
+            os.mkdir(db_path)
+        new_path=os.path.join(db_path,os.path.basename(path))
+        os.rename(path, new_path)
+        return new_path
+
+    def gen_event_invitations(self, name, entity, self_doc=False):
+        details = self.get_event_details(name)
+        admin = self.get_user()['username'] if self_doc else 'A equipa de gestão do evento'
+        icon = details['icon_path'] if details['icon_path'] != 'None' else '../static/images/logo.png'
+        path_invites = invitations_docs(entity=entity,event=name,icon_path=icon,dates=(details['start'],details['end']),place=details['place'],admin_name=admin)
+        path_invites = os.path.join(os.getcwd(),os.path.basename(path_invites))
+        db_path = os.getcwd() + '/events_docs_db/' + name
+        if not os.path.exists(db_path):
+            os.mkdir(db_path)
+        new_path=os.path.join(db_path,os.path.basename(path_invites))
+        os.rename(path_invites, new_path)
+        return new_path
 
     # ##########################################################################
     # Initial Pages

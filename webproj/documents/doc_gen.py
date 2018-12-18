@@ -18,8 +18,8 @@ def date_process(date_lst):
     start, end = date_lst
     s_y,s_m, s_d = start.split('-')
     e_y, e_m, e_d = end.split('-')
-    s_date = s_d + ' de ' + months[int(s_m)] + ' de ' + s_y
-    e_date = e_d + ' de ' + months[int(e_m)] + ' de ' + e_y
+    s_date = s_d + ' de ' + months[int(s_m)-1] + ' de ' + s_y
+    e_date = e_d + ' de ' + months[int(e_m)-1] + ' de ' + e_y
     return (s_date,e_date)
     
 ##############################################################
@@ -130,7 +130,7 @@ def health_docs(entity_list=None,event=None,icon_path='../static/images/logo.png
 
 ##############################################################
 # invitations documents
-def invitations_docs(entity_list=None,event=None,icon_path='../static/images/logo.png',admin_name=None,dates=None,place=None):
+def invitations_docs(entity=None,event=None,icon_path='../static/images/logo.png',admin_name=None,dates=None,place=None):
     doc = Document('basic',geometry_options=geometry_options)
     first_page = PageStyle("firstpage")
     s_date, e_date = date_process(dates)
@@ -159,15 +159,12 @@ def invitations_docs(entity_list=None,event=None,icon_path='../static/images/log
                 pass
 
     # body
-    with doc.create(Section(title=NoEscape('\\normalsize{Às seguintes entidades:}'), numbering=False)):
-        with doc.create(Itemize()) as itemize:
-            for entity in entity_list:
-                itemize.add_item(entity)
+    with doc.create(Section(title=NoEscape('\\normalsize{Caro '+entity+': }'), numbering=False)):
         if e_date==s_date:
-            doc.append('Vimos por este meio solicitar a vossa presença no evento '+event+', que se realizará a '+s_date+', em '+place+'.')
+            doc.append('Vimos por este meio convidá-lo a participar no evento '+event+', que se realizará a '+s_date+', em '+place+'.')
         else:
-            doc.append('Vimos por este meio solicitar a vossa presença no evento '+event+', que se realizará entre '+s_date+' e '+e_date+', em '+place+'.')
-        doc.append('\n\nEsperando contar com a vossa participação neste sentido, antecipadamente agradecemos e nos colocamos à disposição para qualquer dúvida.')
+            doc.append('Vimos por este meio convidá-lo a participar no evento '+event+', que se realizará entre '+s_date+' e '+e_date+', em '+place+'.')
+        doc.append('\n\nEsperando contar com a sua participação neste sentido, antecipadamente agradecemos e nos colocamos à disposição para qualquer dúvida.')
     
     # thank you note
     with doc.create(Center()):
