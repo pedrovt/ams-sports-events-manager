@@ -9,29 +9,17 @@
 </div>
 
 <div class="container">
-
+    
     <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        {% for document in documents %}
+        <a href="{{document['link']}}" class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">DOCUMENT</h5>
+                <h5 class="mb-1">{{document['name']}}</h5>
                 <small></small>
             </div>
-            <p class="mb-1" href="#">TYPE</p>
+            <p class="mb-1" href="{{document['link']}}">{{document['type']}}</p>
         </a>
-        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">DOCUMENT</h5>
-                <small></small>
-            </div>
-            <p class="mb-1" href="#">TYPE</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">DOCUMENT</h5>
-                <small></small>
-            </div>
-            <p class="mb-1" href="#">TYPE</p>
-        </a>
+        {% endfor %}
     </div>
 
 </div>

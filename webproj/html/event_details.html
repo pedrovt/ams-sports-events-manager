@@ -4,7 +4,7 @@
 
 <div class="jumbotron" style="background-image: url(static/images/header_level2.png); color:white">
     <h1>{{details['name']}} {{ title }}</h1>
-    <p class="lead">Details of Your Event</p>
+    <p class="lead">Details of Your Event </p>
     <p><a href="my_events" class="btn btn-primary btn-large">Go back to your events &raquo;</a></p>
 </div>
 
@@ -29,6 +29,7 @@
             {% endif %}
         </ul>
 
+        {% if is_admin == True %}
         <div class="card-footer">
             
             <p class="card-text">
@@ -45,9 +46,11 @@
                 </form>
             </p>
         </div>
+        {% endif %}
     </div>
 
     <!-- Documents -->
+    {% if is_admin == True %}
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Documents<span class="badge">7</span></h5>
@@ -70,21 +73,28 @@
             </p>
         </div>
     </div>
-    
+    {% endif %}
+
     <!-- Participants -->
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Participants<span class="badge">7</span></h5>
+            {% if is_admin == True %}
+            <p class="card-text">View the event's participants.</p>
+            {% else %}
             <p class="card-text">Add or view your event's participants.</p>
+            {% endif %}
         </div>
         
         <div class="card-footer">
+            {% if is_admin == True %}
             <p class="card-text">
                 <form method="get" action="add_participants">
                     <input type="hidden" value="{{details['name']}}" name="e_name" />
                     <button type="submit" class="btn btn-sm btn-primary">Add Participants</button>
                 </form>
             </p>
+            {% endif %}
             
             <p class="card-text">
                 <form method="get" action="see_participants">
@@ -100,15 +110,21 @@
     <div class="card">
         <div class="card-body">
             <h5 class="card-title">Results<span class="badge">7</span></h5>
+            {% if is_admin == True %}
+            <p class="card-text">View your results.</p>
+            {% else %}
             <p class="card-text">Add (or update automatically) and consult your event's results.</p>
+            {% endif %}
         </div>
         
         <div class="card-footer">
             <p class="card-text">
+                {% if is_admin == True %}
                 <form method="get" action="add_results">
                     <input type="hidden" value="{{details['name']}}" name="e_name" />
                     <button type="submit" class="btn btn-sm btn-primary">Add Results</button>
                 </form>
+                {% endif %}
             </p>
             
             <p class="card-text">

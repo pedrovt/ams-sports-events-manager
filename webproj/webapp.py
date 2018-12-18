@@ -10,6 +10,10 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 
 from documents.doc_gen import *
 
+PEOPLE_SEPARATOR = ";"
+MODALITIES=['Football', 'Volleyball']
+EVENT_SIZE=[] # TODO SMALL; MEDIUM; LARGE
+
 class WebApp(object):
     dbsqlite = 'data/db.sqlite3'
     dbjson = 'data/db.json'
@@ -70,7 +74,7 @@ class WebApp(object):
     def create_eventDB(self, name, s_date, e_date, place, modality, participants, visibility, icon=None):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         username=self.get_user()['username']
-        team = "" + username + ";"
+        team = "" + username + PEOPLE_SEPARATOR
         sql = "insert into events (creator, team, e_name, s_date, e_date, place, modality, participants, visibility,icon,inscriptions) values ('{}','{}','{}','{}','{}','{}','{}','{}','{}','{}','')".format(username,team,name,s_date,e_date,place,modality,participants,False if visibility=='Private' else True, icon if icon else None)
         try:
             cur = db_con.execute(sql)
@@ -81,14 +85,15 @@ class WebApp(object):
         return None
 
     def get_events(self):
-        # todo select events where participnants are...
         username = self.get_user()['username']
+        
+        # select events where user is admin
         sql = "select * from events where team like '%{}%'".format(username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
         table = cur.fetchall()
-        db_con.close()
-        lst =[]
+        
+        lst = []
         for event in table:
             e = {
                 'creator':event[1],
@@ -104,7 +109,34 @@ class WebApp(object):
                 'inscriptions':event[11]
                 }
             lst.append(e)
+        
+        # select events where user is a participant
+        # TODO simplty 
+        # would be enough where team like '%{}%' or where inscriptions like '%{}%'
+        sql = "select * from events where inscriptions like '%{}%'".format(username)    
+        cur = db_con.execute(sql)
+        table = cur.fetchall()
+
+        for event in table:
+            e = {
+                'creator':event[1],
+                'management':event[2],
+                'name':event[3],
+                'start':event[4],
+                'end':event[5],
+                'place':event[6],
+                'modality':event[7],
+                'participants':event[8],
+                'visible':event[9],
+                'icon_path':event[10],
+                'inscriptions':event[11]
+                }
+            lst.append(e)
+
+        db_con.close()
         return lst
+
+
 
     def delete_event(self, name):
         username = self.get_user()['username']
@@ -140,7 +172,7 @@ class WebApp(object):
         if usr not in management:
             return "Error: Not a manager, can't add participants"
         if not insc_lst:
-            insc_lst = insc_name + ","
+            insc_lst = insc_name + PEOPLE_SEPARATOR
         else:
             insc_lst += insc_name + ","
         put_sql = "update events set inscriptions='{}' where e_name='{}'".format(insc_lst, e_name)
@@ -174,7 +206,7 @@ class WebApp(object):
         cur = db_con.execute(sql)
         event = cur.fetchall()[0]
         db_con.close()
-        # TODO get docs, participants and results count
+        
         e = {
             'creator':event[1],
             'management':event[2],
@@ -188,7 +220,16 @@ class WebApp(object):
             'icon_path':event[11],
             'inscriptions':event[10]
             }
-        return e
+
+        # verify if user is a manager or a participant
+        username = self.get_user()['username']
+        management_team = event[2]
+        management_team_lst = management_team.split(PEOPLE_SEPARATOR)
+
+        if (username in management_team_lst):
+            return e, True
+        
+        return e, False
     
     def gen_event_doc(self, name, entity_list, self_doc=False, doctype='Security'):
         details = self.get_event_details(name)
@@ -357,13 +398,14 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
         else:
-            details = self.get_event_details(e_name)
+            details, is_admin = self.get_event_details(e_name)
             tparams = {
                 'title': 'Event Details',
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year,
-                'details': details
+                'details': details,
+                'is_admin': is_admin
             }
             return self.render('event_details.html', tparams)
 
