@@ -8,11 +8,6 @@ from sqlite3 import Error
 from jinja2 import Environment, PackageLoader, select_autoescape
 from documents.doc_gen import *
 
-# TODO 
-# Create Documents : 
-# Add Participants :
-# Add Results      : update DB
-
 PEOPLE_SEPARATOR = ";"
 MODALITIES=['Football', 'Volleyball']
 EVENT_SIZE=[] # TODO SMALL; MEDIUM; LARGE
@@ -303,6 +298,11 @@ class WebApp(object):
         event = cur.fetchall()[0]
         db_con.close()
         
+        # get counters
+        inscriptions = self.get_inscriptions(name)
+        results = self.get_event_results(name)
+        documents = self.get_event_documents(name)
+
         e = {
             'creator':event[1],
             'management':event[2],
@@ -314,7 +314,12 @@ class WebApp(object):
             'participants':event[8],
             'visible':event[9],
             'icon_path':event[11],
-            'inscriptions':event[10]
+            'inscriptions': inscriptions,
+            'inscriptions_count': len(inscriptions),
+            'results': results,
+            'results_count': len(results),
+            'documents': documents,
+            'documents_count': len(documents)
             }
 
         # verify if user is a manager or a participant
@@ -553,10 +558,9 @@ class WebApp(object):
             
     @cherrypy.expose
     def add_results(self, e_name=None, auto=None, participant_username=None, result=None, date=None):
-        # TODO this page needs:
+        # this page needs:
         # -> If Add Result is pressed, add result and return to event_details
-        # -> Else, fetch results from dummy sensor (JSON based?), return error 
-        
+        # TODO -> Else, fetch results from dummy sensor (JSON based?), return error 
 
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
@@ -585,7 +589,6 @@ class WebApp(object):
             # FIXME temp fix
             print("\n\n\n\n\n\n\n")
             raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
-
 
     @cherrypy.expose
     def create_documents(self, e_name=None, security=None, security_create=None, health=None, health_create=None, invite_create=None):

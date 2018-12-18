@@ -53,7 +53,7 @@
     {% if is_admin == True %}
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Documents<span class="badge">7</span></h5>
+            <h5 class="card-title">Documents<span class="badge">{{details['documents_count']}}</span></h5>
             <p class="card-text">Create or consult the documents you generated.</p>
             </div>
         <div class="card-footer">
@@ -78,7 +78,7 @@
     <!-- Participants -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Participants<span class="badge">7</span></h5>
+            <h5 class="card-title">Participants<span class="badge">{{details['inscriptions_count']}}</span></h5>
             {% if is_admin == True %}
             <p class="card-text">View the event's participants.</p>
             {% else %}
@@ -109,7 +109,7 @@
     <!-- Results -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Results<span class="badge">7</span></h5>
+            <h5 class="card-title">Results<span class="badge">{{details['results_count']}}</span></h5>
             {% if is_admin == True %}
             <p class="card-text">View your results.</p>
             {% else %}
