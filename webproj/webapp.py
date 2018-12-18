@@ -409,7 +409,10 @@ class WebApp(object):
             return self.render('add_results.html', tparams)
 
     @cherrypy.expose
-    def create_documents(self, e_name=None):
+    def create_documents(self, e_name=None, security=None, security_create=None, health=None, health_create=None, invite_create=None):
+        # SOMETHING_create : if True, create
+        # SOMETHING: info (e.g authority name)
+
         # TODO this page needs:
         # -> When Create Documents is pressed
         # -> For each card:
@@ -422,7 +425,8 @@ class WebApp(object):
                 'title': 'Create Documents',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year
+                'year': datetime.now().year,
+                'e_name': e_name
             }
             return self.render('create_documents.html', tparams)
 
