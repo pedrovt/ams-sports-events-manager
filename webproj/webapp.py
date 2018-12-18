@@ -9,8 +9,8 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from documents.doc_gen import *
 
 # TODO 
-# Create Documents : create document and update DB
-# Add Participants : update DB from manual or auto (receive from JSON)
+# Create Documents : 
+# Add Participants :
 # Add Results      : update DB
 
 PEOPLE_SEPARATOR = ";"
@@ -343,6 +343,24 @@ class WebApp(object):
         os.rename(path_invites, new_path)
         return new_path
 
+    def get_event_documents(self, e_name):
+        sql = "select * from documents where e_name == '{}'".format(e_name)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        documents_lst = cur.fetchall()
+        db_con.close()
+
+        event_documents = []
+        for document in documents_lst:
+            d = {
+                'name': document[2],
+                'type': document[3],
+                'path': document[4]
+            }
+            event_documents.append(d)
+
+        return event_documents
+    
     # ##########################################################################
     # #########################################
     # Initial Pages
@@ -597,20 +615,20 @@ class WebApp(object):
             }
             return self.render('see_results.html', tparams)
     
-    def get_event_documents(self, e_name):
-        pass
 
     @cherrypy.expose
     def see_documents(self, e_name=None):
-        # TODO this page needs:
         # -> For each document/list item: name, type and link
+
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         else:
-            # documents = self.get_event_documents()
+            documents = self.get_event_documents(e_name)
+            
             # for debug purposes 
-            documents = [{'name': 'NAME', 'type': 'HEALTH', 'path': 'URL'}, {
-                'name': 'NAME1', 'type': 'HEALTH', 'path': 'URL'}]
+            # documents = [{'name': 'NAME', 'type': 'HEALTH', 'path': 'URL'}, {
+            #    'name': 'NAME1', 'type': 'HEALTH', 'path': 'URL'}]
+            
             tparams = {
                 'title': 'Documents',
                 'errors': False,
