@@ -251,11 +251,28 @@ class WebApp(object):
         for result in results_lst:
             r = {
                 'username': result[2],
-                'result': result[3]
+                'result': result[3],
+                'date': result[4]
             }
             event_results.append(r)
 
         return event_results
+
+    def add_result(self, e_name, participant_username, result, date):
+        print("RESULT ADD")
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        
+        sql = "insert into results (e_name, username, result, date) values ('{}','{}','{}','{}')".format(e_name, participant_username, result, date)
+
+        try:
+            cur = db_con.execute(sql)
+            db_con.commit()
+            db_con.close()
+        except sqlite3.Error as e:
+            return e
+        
+        print("FINISH")
+        return None
 
     # #########################################
     # 
@@ -535,22 +552,40 @@ class WebApp(object):
                 return self.render('add_participants.html', tparams)
             
     @cherrypy.expose
-    def add_results(self, e_name=None):
+    def add_results(self, e_name=None, auto=None, participant_username=None, result=None, date=None):
         # TODO this page needs:
         # -> If Add Result is pressed, add result and return to event_details
         # -> Else, fetch results from dummy sensor (JSON based?), return error 
+        
 
-        #print('usr on: ', self.get_user()['is_authenticated'])
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
-        else:
+        elif not auto or not participant_username or not result or not date:
+            # Add Results Page
             tparams = {
                 'title': 'Add Results',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year
+                'year': datetime.now().year,
+                'e_name': e_name,
+                'participants': self.get_inscriptions_details(e_name)
             }
             return self.render('add_results.html', tparams)
+        else:
+            print("\n\n\n\n\n\n\n")
+            print(auto)
+            
+            if auto == True:    # TODO auto fetch results from virtual sensors
+                print("AUTO")
+            else:       
+                print("MANUAL")
+                self.add_result(e_name, participant_username, result, date)
+            
+            # redirect to event_details
+            # FIXME temp fix
+            print("\n\n\n\n\n\n\n")
+            raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
+
 
     @cherrypy.expose
     def create_documents(self, e_name=None, security=None, security_create=None, health=None, health_create=None, invite_create=None):
@@ -578,7 +613,7 @@ class WebApp(object):
     # See Info Pages
     @cherrypy.expose
     def see_participants(self, e_name=None):
-        # TODO this page needs:
+        # this page needs:
         # -> For each participant/list item: username and email
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
@@ -615,9 +650,9 @@ class WebApp(object):
             }
             return self.render('see_results.html', tparams)
     
-
     @cherrypy.expose
     def see_documents(self, e_name=None):
+        # this page needs:
         # -> For each document/list item: name, type and link
 
         if not self.get_user()['is_authenticated']:
