@@ -1,19 +1,23 @@
+import cherrypy
 import json
 import os
 import sqlite3
+import requests
 from datetime import datetime
 from sqlite3 import Error
-
-import requests
-import cherrypy
 from jinja2 import Environment, PackageLoader, select_autoescape
-
 from documents.doc_gen import *
+
+# TODO 
+# Create Documents : create document and update DB
+# Add Participants : update DB from manual or auto (receive from JSON)
+# Add Results      : update DB
 
 PEOPLE_SEPARATOR = ";"
 MODALITIES=['Football', 'Volleyball']
 EVENT_SIZE=[] # TODO SMALL; MEDIUM; LARGE
 
+# ##############################################################################
 class WebApp(object):
     dbsqlite = 'data/db.sqlite3'
     dbjson = 'data/db.json'
@@ -24,19 +28,8 @@ class WebApp(object):
                 autoescape=select_autoescape(['html', 'xml'])
                 )
 
-    ########################################################################################################################
+    ############################################################################
     # Utilities
-    def set_user(self, username=None):
-        if username == None:
-            cherrypy.session['user'] = {'is_authenticated': False, 'username': ''}
-        else:
-            cherrypy.session['user'] = {'is_authenticated': True, 'username': username}
-
-    def get_user(self):
-        if not 'user' in cherrypy.session:
-            self.set_user()
-        return cherrypy.session['user']
-
     def render(self, tpg, tps):
         template = self.env.get_template(tpg)
         return template.render(tps)
@@ -48,6 +41,19 @@ class WebApp(object):
         except Error as e:
             print(e)
         return None
+
+    # #########################################
+    # User Authentication
+    def set_user(self, username=None):
+        if username == None:
+            cherrypy.session['user'] = {'is_authenticated': False, 'username': ''}
+        else:
+            cherrypy.session['user'] = {'is_authenticated': True, 'username': username}
+
+    def get_user(self):
+        if not 'user' in cherrypy.session:
+            self.set_user()
+        return cherrypy.session['user']
 
     def do_authenticationDB(self, usr, pwd):
         user = self.get_user()
@@ -71,6 +77,8 @@ class WebApp(object):
             return e
         return None
 
+    # #########################################
+    # Create and Get Events
     def create_eventDB(self, name, s_date, e_date, place, modality, participants, visibility, icon=None):
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         username=self.get_user()['username']
@@ -136,8 +144,8 @@ class WebApp(object):
         db_con.close()
         return lst
 
-
-
+    # #########################################
+    # Event Management
     def delete_event(self, name):
         username = self.get_user()['username']
         sql = "delete from events where e_name='{}' and team like '%{}%'".format(name, username)
@@ -153,6 +161,8 @@ class WebApp(object):
         db_con.commit()
         db_con.close()
 
+    # #########################################
+    # Inscriptions/Participants
     def get_inscriptions(self, name):
         sql = "select inscriptions from events where e_name='{}'".format(name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
@@ -167,6 +177,47 @@ class WebApp(object):
             print("Internal Error while removing '' name")
         
         return insc_lst
+
+    def get_inscriptables(self, name):
+        sql = "select username from users"
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        users_lst = cur.fetchall()
+        db_con.close()
+
+        users_lst = [user[0] for user in users_lst] 
+        inscriptions_lst = self.get_inscriptions(name)
+        inscriptables = [user for user in users_lst if user not in inscriptions_lst]
+        
+        #print("A " + str(users_lst) + str(type(users_lst)))
+        #print("B " + str(inscriptions_lst) + str(type(inscriptions_lst)))
+        #print("C " + str(inscriptables) + str(type(inscriptables)))
+
+        return inscriptables
+
+    def get_inscriptions_details(self, name):
+        insc_lst = self.get_inscriptions(name)
+        insc_detail_lst = []
+
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+
+        for username in insc_lst:
+            sql = "select email from users where username='{}'".format(username)
+            cur = db_con.execute(sql)
+            email = cur.fetchall()
+
+            # print("FOR " + str(name))
+            # print("EMAIL IS " + str(email) + " WHICH IS " + str(type(email)))
+            # print("PARSED EMAIL IS " + str(email[0]) + " WHICH IS " + str(type(email[0])))
+            # print("PARSED EMAIL TUPLE IS " +
+            #       str(email[0][0]) + " WHICH IS " + str(type(email[0][0])))
+
+            insc_detail_lst.append({'name': username, 
+                                    'email': email[0][0]})
+
+        db_con.close()
+
+        return insc_detail_lst
 
     def add_inscription(self, e_name, insc_name):
         usr = self.get_user()['username']
@@ -187,6 +238,8 @@ class WebApp(object):
         db_con.commit()
         db_con.close()
 
+    # #########################################
+    # 
     def usr_exists(self, name):
         sql = "select * from users where name='{}'".format(name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
@@ -196,7 +249,7 @@ class WebApp(object):
         if not name:
             return False
         return True
-
+    
     def event_exists(self, name):
         sql = "select * from events where e_name='{}'".format(name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
@@ -238,6 +291,8 @@ class WebApp(object):
         
         return e, False
     
+    # #########################################
+    # Documents
     def gen_event_doc(self, name, entity_list, self_doc=False, doctype='Security'):
         details = self.get_event_details(name)
         admin = self.get_user()['username'] if self_doc else 'A equipa de gestão do evento'
@@ -270,6 +325,7 @@ class WebApp(object):
         return new_path
 
     # ##########################################################################
+    # #########################################
     # Initial Pages
     @cherrypy.expose
     def index(self):
@@ -290,7 +346,7 @@ class WebApp(object):
         }
         return self.render('about.html', tparams)
 
-    # ##########################################################################
+    # #########################################
     # Authentication
     @cherrypy.expose
     def login(self, username=None, password=None):
@@ -342,7 +398,7 @@ class WebApp(object):
         self.set_user()
         raise cherrypy.HTTPRedirect("/")
     
-    # ##########################################################################
+    # #########################################
     # Event Management Pages
     @cherrypy.expose
     def create_event(self, name=None, s_date=None, e_date=None, place=None, modality=None, participants=None, visibility=None, icon=None):
@@ -416,16 +472,10 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
 
-    # ##########################################################################
+    # #########################################
     # Add Info Pages
     @cherrypy.expose
     def add_participants(self, e_name=None, participant_username=None, more=None):
-        # TODO this page needs:
-        # -> If there's no user, return error
-        # -> Else, add participant
-        # -> If Add More, redirect to the same page
-        # -> Else, redirect to event_details
-
         # TODO December 18
         # when participant_username!= None:
         #   add inscription
@@ -443,11 +493,10 @@ class WebApp(object):
                     'user': self.get_user(),
                     'year': datetime.now().year,
                     'e_name': e_name,
-                    'participants': self.get_inscriptions(e_name)
+                    'participants': self.get_inscriptables(e_name)
                 }
                 return self.render('add_participants.html', tparams)
             
-
     @cherrypy.expose
     def add_results(self, e_name=None):
         # TODO this page needs:
@@ -488,7 +537,7 @@ class WebApp(object):
             }
             return self.render('create_documents.html', tparams)
 
-    # ##########################################################################
+    # #########################################
     # See Info Pages
     @cherrypy.expose
     def see_participants(self, e_name=None):
@@ -501,7 +550,8 @@ class WebApp(object):
                 'title': 'Participants',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year
+                'year': datetime.now().year,
+                'participants': self.get_inscriptions_details(e_name)
             }
             return self.render('see_participants.html', tparams)
 
@@ -540,20 +590,28 @@ class WebApp(object):
             }
             return self.render('see_documents.html', tparams)
 
+    # #########################################
     @cherrypy.expose
     def shut(self):
         cherrypy.engine.exit()
 
-    # ##########################################################################
+    # #########################################
     # Error pages
     @cherrypy.expose
     def error_404(self):
-        pass
+        tparams = {
+            'title': "404 - The Page can't be found"
+        }
+        return self.render('error.html', tparams)
 
     @cherrypy.expose
     def error_500(self):
-        pass
-    
+        tparams = {
+            'title': "500 - Internal Server Error"
+        }
+        return self.render('error.html', tparams)
+
+# ##############################################################################
 if __name__ == '__main__':
     baseDir = os.path.dirname(os.path.abspath(__file__))
     cherrypy.log("The City Running Project")
