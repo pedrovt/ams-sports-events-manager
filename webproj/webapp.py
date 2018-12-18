@@ -239,6 +239,25 @@ class WebApp(object):
         db_con.close()
 
     # #########################################
+    # Results
+    def get_event_results(self, e_name):
+        sql = "select * from results where e_name == '{}'".format(e_name)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        cur = db_con.execute(sql)
+        results_lst = cur.fetchall()
+        db_con.close()
+
+        event_results=[]
+        for result in results_lst:
+            r = {
+                'username': result[2],
+                'result': result[3]
+            }
+            event_results.append(r)
+
+        return event_results
+
+    # #########################################
     # 
     def usr_exists(self, name):
         sql = "select * from users where name='{}'".format(name)
@@ -557,16 +576,17 @@ class WebApp(object):
 
     @cherrypy.expose
     def see_results(self, e_name=None):
-        # TODO this page needs:
+        # this page needs:
         # -> For each result/list item: participant name, result and date
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         else:
-            #results = self.get_event_results(e_name)    # we can discuss if the user could only see his/her results
+            # we can discuss if the user could only see his/her results
+            results = self.get_event_results(e_name)   
             
             # for debug purposes
-            results = [{'username': 'USER', 'result': '5-24562'},
-                       {'username': 'sfdf', 'result': 'adsd-24562'}]
+            # results = [{'username': 'USER', 'result': '5-24562'},
+            #            {'username': 'sfdf', 'result': 'adsd-24562'}]
 
             tparams = {
                 'title': 'Results',
@@ -576,13 +596,10 @@ class WebApp(object):
                 'results': results
             }
             return self.render('see_results.html', tparams)
-
-    def get_event_results(self, e_name):
-        pass
     
     def get_event_documents(self, e_name):
         pass
-        
+
     @cherrypy.expose
     def see_documents(self, e_name=None):
         # TODO this page needs:
