@@ -12,12 +12,12 @@
     
     <div class="list-group">
         {% for document in documents %}
-        <a href="{{document['link']}}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <a href="{{document['path']}}" class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
                 <h5 class="mb-1">{{document['name']}}</h5>
                 <small></small>
             </div>
-            <p class="mb-1" href="{{document['link']}}">{{document['type']}}</p>
+            <p class="mb-1" href="{{document['path']}}">{{document['type']}}</p>
         </a>
         {% endfor %}
     </div>
