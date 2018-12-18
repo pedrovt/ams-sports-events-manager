@@ -623,6 +623,7 @@ class WebApp(object):
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year,
+                'e_name': e_name,
                 'participants': self.get_inscriptions_details(e_name)
             }
             return self.render('see_participants.html', tparams)
@@ -646,6 +647,7 @@ class WebApp(object):
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year,
+                'e_name': e_name,
                 'results': results
             }
             return self.render('see_results.html', tparams)
@@ -669,6 +671,7 @@ class WebApp(object):
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year,
+                'e_name': e_name,
                 'documents': documents
             }
             return self.render('see_documents.html', tparams)
