@@ -11,29 +11,16 @@
 <div class="container">
 
     <div class="list-group">
-        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
+        {% for result in results %}
+        <a class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">PARTICIPANT NAME</h5>
-                <small>DATE</small>
+                <h5 class="mb-1">{{result['username']}}</h5>
+                <!-- <small>DATE</small> -->
             </div>
-            <p class="mb-1">RESULT</p>
+            <p class="mb-1">{{result['result']}}</p>
         </a>
-        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">PARTICIPANT NAME</h5>
-                <small>DATE</small>
-            </div>
-            <p class="mb-1">RESULT</p>
-        </a>
-        <a href="#" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">PARTICIPANT NAME</h5>
-                <small>DATE</small>
-            </div>
-            <p class="mb-1">RESULT</p>
-        </a>
+        {% endfor %}
     </div>
-
 </div>
 
 {% endblock %}

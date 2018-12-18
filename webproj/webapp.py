@@ -562,14 +562,27 @@ class WebApp(object):
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         else:
+            #results = self.get_event_results(e_name)    # we can discuss if the user could only see his/her results
+            
+            # for debug purposes
+            results = [{'username': 'USER', 'result': '5-24562'},
+                       {'username': 'sfdf', 'result': 'adsd-24562'}]
+
             tparams = {
                 'title': 'Results',
                 'errors': False,
                 'user': self.get_user(),
-                'year': datetime.now().year
+                'year': datetime.now().year,
+                'results': results
             }
             return self.render('see_results.html', tparams)
 
+    def get_event_results(self, e_name):
+        pass
+    
+    def get_event_documents(self, e_name):
+        pass
+        
     @cherrypy.expose
     def see_documents(self, e_name=None):
         # TODO this page needs:
