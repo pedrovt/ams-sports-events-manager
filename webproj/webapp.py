@@ -185,10 +185,6 @@ class WebApp(object):
         inscriptions_lst = self.get_inscriptions(name)
         inscriptables = [user for user in users_lst if user not in inscriptions_lst]
         
-        #print("A " + str(users_lst) + str(type(users_lst)))
-        #print("B " + str(inscriptions_lst) + str(type(inscriptions_lst)))
-        #print("C " + str(inscriptables) + str(type(inscriptables)))
-
         return inscriptables
 
     def get_inscriptions_details(self, name):
@@ -201,12 +197,6 @@ class WebApp(object):
             sql = "select email from users where username='{}'".format(username)
             cur = db_con.execute(sql)
             email = cur.fetchall()
-
-            # print("FOR " + str(name))
-            # print("EMAIL IS " + str(email) + " WHICH IS " + str(type(email)))
-            # print("PARSED EMAIL IS " + str(email[0]) + " WHICH IS " + str(type(email[0])))
-            # print("PARSED EMAIL TUPLE IS " +
-            #       str(email[0][0]) + " WHICH IS " + str(type(email[0][0])))
 
             insc_detail_lst.append({'name': username, 
                                     'email': email[0][0]})
@@ -728,7 +718,7 @@ class WebApp(object):
             # for debug purposes 
             # documents = [{'name': 'NAME', 'type': 'HEALTH', 'path': 'URL'}, {
             #    'name': 'NAME1', 'type': 'HEALTH', 'path': 'URL'}]
-            
+            print(documents)
             tparams = {
                 'title': 'Documents',
                 'errors': False,
@@ -738,6 +728,27 @@ class WebApp(object):
                 'documents': documents
             }
             return self.render('see_documents.html', tparams)
+
+    @cherrypy.expose
+    def view_doc(self, e_name=None, doctype=None, path=None):
+        if not self.get_user()['is_authenticated']:
+            raise cherrypy.HTTPRedirect('/login')
+        else:
+            # for debug purposes 
+            # documents = [{'name': 'NAME', 'type': 'HEALTH', 'path': 'URL'}, {
+            #    'name': 'NAME1', 'type': 'HEALTH', 'path': 'URL'}]
+            print(e_name, doctype, path)
+            tparams = {
+                'title': doctype + 'document of event ' + e_name,
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'e_name': e_name,
+                'doctype':doctype,
+                'path': path
+            }
+            return self.render('view_doc.html', tparams)
+
 
     # #########################################
     # Error pages

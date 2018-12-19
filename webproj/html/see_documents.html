@@ -14,15 +14,19 @@
 <div class="container">
     
     <div class="list-group">
-        {% for document in documents %}
-        <a href="{{document['path']}}" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-                <h5 class="mb-1">{{document['name']}}</h5>
-                <small></small>
-            </div>
-            <p class="mb-1" href="{{document['path']}}">{{document['type']}}</p>
-        </a>
-        {% endfor %}
+      {% for document in documents %}
+      <form method="get" action="view_doc" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1">{{document['name']}}</h5>
+          <input type="hidden" value="{{e_name}}" name="e_name" />
+          <input type="hidden" value="{{document['path']}}" name="path" />
+          <input type="hidden" value="{{document['type']}}" name="doctype" />
+          <button type="submit" class="btn btn-sm btn-primary">View document</button>
+          <small></small>
+        </div>
+        <p class="mb-1" href="{{document['path']}}">{{document['type']}}</p>
+      </form>
+      {% endfor %}
     </div>
 
 </div>
