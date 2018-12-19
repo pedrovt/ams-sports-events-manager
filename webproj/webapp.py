@@ -9,8 +9,17 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from documents.doc_gen import *
 
 PEOPLE_SEPARATOR = ";"
-MODALITIES=['Football', 'Volleyball']
-EVENT_SIZE=[] # TODO SMALL; MEDIUM; LARGE
+
+# Event Info
+EVENT_MODALITIES = ['Football', 'Volleyball', 'Marathons', 'Others']
+
+EVENT_SIZES      = {'Small' :'1-10 participants', 
+                    'Medium':'10-100 participants', 
+                    'Large' :'100+ participants'}
+
+EVENT_SIZES_MAX  = {'Small (1-10 participants)'     : 10,
+                    'Medium (10-100 participants)'  : 100,
+                    'Large (100+ participants)'     : None}
 
 # ##############################################################################
 class WebApp(object):
@@ -481,6 +490,8 @@ class WebApp(object):
                     'errors': False,
                     'user': self.get_user(),
                     'year': datetime.now().year,
+                    'modalities': EVENT_MODALITIES,
+                    'sizes': EVENT_SIZES
                 }
                 return self.render('create_event.html', tparams)
                
@@ -492,7 +503,9 @@ class WebApp(object):
                     'errors': True,
                     'user': self.get_user(),
                     'year': datetime.now().year,
-                    'error': e
+                    'error': e,
+                    'modalities': EVENT_MODALITIES,
+                    'sizes': EVENT_SIZES
                 }
                 return self.render('create_event.html', tparams)
             raise cherrypy.HTTPRedirect('/my_events')
@@ -535,7 +548,8 @@ class WebApp(object):
                 'user': self.get_user(),
                 'year': datetime.now().year,
                 'details': details,
-                'is_admin': is_admin
+                'is_admin': is_admin,
+                'size_limits': EVENT_SIZES_MAX
             }
             return self.render('event_details.html', tparams)
 

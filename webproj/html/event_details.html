@@ -17,8 +17,8 @@
         
         <!-- Event Info -->
         <ul class="list-group list-group-flush">
+            <li class="list-group-item">At <a class="card-text" href="https://www.google.com/maps?q={{details['place']}}">{{details['place']}}</a></li>
             <li class="list-group-item">From {{details['start']}} to {{details['end']}}</li>
-            <li class="list-group-item">At {{details['place']}}</li>
             <li class="list-group-item">{{details['modality']}}</li>
             <li class="list-group-item">{{details['participants']}}</li>
             <!-- Visibility -->
@@ -35,7 +35,7 @@
             <p class="card-text">
                 <form method="get" action="edit_event">
                     <input type="hidden" value="{{details['name']}}" name="e_name" />
-                    <button type="submit" class="btn btn-sm btn-primary" disabled>Edit Information</button>
+                    <button type="submit" class="btn btn-sm btn-primary">Edit Information</button>
                 </form>
             </p>
             
@@ -78,7 +78,11 @@
     <!-- Participants -->
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Participants<span class="badge">{{details['inscriptions_count']}}</span></h5>
+            <h5 class="card-title">Participants<span class="badge">{{details['inscriptions_count']}} 
+                {% if size_limits[details['participants']] != None %}
+                of {{size_limits[details['participants']]}}
+                {% endif %}
+            </span></h5>
             {% if is_admin == True %}
             <p class="card-text">View the event's participants.</p>
             {% else %}

@@ -30,17 +30,25 @@
             <div class="form-group row">
                 <label for="id_e_mod" class="col-sm-2 col-form-label">Modality</label>
                 <select id="id_e_mod" name="modality" class="form-control">
-                    <option selected>Football</option>
-                    <option>Volleyball</option>
-                    <option>Other</option>
+                    {% for modality in modalities %}
+                        {% if loop.first %}
+                        <option selected>{{modality}}</option>
+                        {% else %}
+                        <option>{{modality}}</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </div>
             <div class="form-group row">
                 <label for="id_e_part" class="col-sm-2 col-form-label">Dimension</label>
                 <select id="id_e_part" name="participants" class="form-control" type="number">
-                    <option selected>Small (1-10 participants)</option>
-                    <option>Medium (10-100 participants)</option>
-                    <option>Large (100+ participants)</option>
+                    {% for size in sizes %}
+                        {% if loop.first %}
+                        <option selected>{{size}} ({{sizes[size]}})</option>
+                        {% else %}
+                        <option>{{size}} ({{sizes[size]}})</option>
+                        {% endif %}
+                    {% endfor %}
                 </select>
             </div>
             
