@@ -774,23 +774,18 @@ class WebApp(object):
             return self.render('view_doc.html', tparams)
 
 
-    # #########################################
-    # Error pages
-    @cherrypy.expose
-    def error_404(self):
-        tparams = {
-            'title': "404 - The Page can't be found"
-        }
-        return self.render('error.html', tparams)
-
-    @cherrypy.expose
-    def error_500(self):
-        tparams = {
-            'title': "500 - Internal Server Error"
-        }
-        return self.render('error.html', tparams)
-
+    
 # ##############################################################################
+# Error page
+def error_page(status, message, traceback, version):
+    tparams = {
+        'status'    : status,
+        'message'   : message,
+        'traceback' : traceback,
+        'version'   : version
+    }
+    return app.render('error.html', tparams)
+
 if __name__ == '__main__':
     baseDir = os.path.dirname(os.path.abspath(__file__))
     cherrypy.log("The City Running Project")
@@ -809,5 +804,10 @@ if __name__ == '__main__':
             'tools.staticfile.filename': '/static/images/favicon.ico'
         }
     }
+
+    cherrypy.config.update({'error_page.404': error_page})      # COMMENT FOR DEBUG PURPOSES
+    cherrypy.config.update({'error_page.500': error_page})      # COMMENT FOR DEBUG PURPOSES
     cherrypy.config.update({'server.socket_host' : '0.0.0.0'})  # THIS LINE CAN'T BE DELETED
-    cherrypy.quickstart(WebApp(), '/', conf)
+
+    app = WebApp()
+    cherrypy.quickstart(app, '/', conf)
