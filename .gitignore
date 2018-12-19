@@ -1,5 +1,6 @@
 /venv/*
 .idea/*
+.vscode/*
 
 archives/*
 webproj/data/db.sqlite3

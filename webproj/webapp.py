@@ -190,8 +190,10 @@ class WebApp(object):
         db_con.close()
 
         users_lst = [user[0] for user in users_lst] 
+        events_details, _ = self.get_event_details(name)
+        management_team = events_details['management']
         inscriptions_lst = self.get_inscriptions(name)
-        inscriptables = [user for user in users_lst if user not in inscriptions_lst]
+        inscriptables = [user for user in users_lst if user not in inscriptions_lst and user not in management_team]
         
         return inscriptables
 
