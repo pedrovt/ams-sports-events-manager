@@ -141,11 +141,12 @@ class WebApp(object):
 
     # #########################################
     # Event Management
-    def delete_event(self, name):
+    def delete_eventDB(self, name):
         username = self.get_user()['username']
         sql = "delete from events where e_name='{}' and team like '%{}%'".format(name, username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
+        db_con.commit()
         db_con.close()
 
     def alter_event(self, name, arg2alter, newarg):
@@ -335,8 +336,9 @@ class WebApp(object):
     # #########################################
     # Documents
     def gen_event_doc(self, name, entity_list, self_doc=False, doctype='Security'):
-        details = self.get_event_details(name)
+        details= self.get_event_details(name)[0]
         admin = self.get_user()['username'] if self_doc else 'A equipa de gestão do evento'
+        print('event_details: ', details)
         icon = details['icon_path'] if details['icon_path'] != 'None' else '../static/images/logo.png'
         if doctype=='Security':
             path = security_docs(entity_list=entity_list,event=name,icon_path=icon,dates=(details['start'],details['end']),place=details['place'],admin_name=admin)
@@ -350,20 +352,34 @@ class WebApp(object):
             os.mkdir(db_path)
         new_path=os.path.join(db_path,os.path.basename(path))
         os.rename(path, new_path)
+        self.store_doc(name, new_path, doctype)
         return new_path
 
-    def gen_event_invitations(self, name, entity, self_doc=False):
-        details = self.get_event_details(name)
+    def gen_event_invitations(self, name, self_doc=False):
+        details = self.get_event_details(name)[0]
         admin = self.get_user()['username'] if self_doc else 'A equipa de gestão do evento'
         icon = details['icon_path'] if details['icon_path'] != 'None' else '../static/images/logo.png'
-        path_invites = invitations_docs(entity=entity,event=name,icon_path=icon,dates=(details['start'],details['end']),place=details['place'],admin_name=admin)
+        path_invites = invitations_docs(event=name,icon_path=icon,dates=(details['start'],details['end']),place=details['place'],admin_name=admin)
         path_invites = os.path.join(os.getcwd(),os.path.basename(path_invites))
         db_path = os.getcwd() + '/events_docs_db/' + name
         if not os.path.exists(db_path):
             os.mkdir(db_path)
         new_path=os.path.join(db_path,os.path.basename(path_invites))
         os.rename(path_invites, new_path)
+        self.store_doc(name, new_path, 'invitations')
         return new_path
+
+    def store_doc(self, name, path, doctype):
+        usr = self.get_user()['username']
+        sql = "insert into documents(e_name,name,type,path) values ('{}','{}','{}','{}') ".format(name,usr,doctype,path)
+        db_con = WebApp.db_connection(WebApp.dbsqlite)
+        try:
+            cur = db_con.execute(sql)
+            db_con.commit()
+            db_con.close()
+            return True
+        except:
+            db_con.close()
 
     def get_event_documents(self, e_name):
         sql = "select * from documents where e_name == '{}'".format(e_name)
@@ -371,7 +387,6 @@ class WebApp(object):
         cur = db_con.execute(sql)
         documents_lst = cur.fetchall()
         db_con.close()
-
         event_documents = []
         for document in documents_lst:
             d = {
@@ -380,7 +395,6 @@ class WebApp(object):
                 'path': document[4]
             }
             event_documents.append(d)
-
         return event_documents
     
     # ##########################################################################
@@ -531,6 +545,40 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
 
+    # TODO: To be done
+    @cherrypy.expose
+    def change_event(self, e_name=None, arg2alter=None, newarg=None):
+        if not self.get_user()['is_authenticated']:
+            raise cherrypy.HTTPRedirect('/login')
+        elif not e_name:
+            tparams = {
+                'title': 'Event Details',
+                'errors': True,
+                'user': self.get_user(),
+                'year': datetime.now().year,
+            }
+            return self.render('event_details.html', tparams)
+        else:
+            details, is_admin = self.get_event_details(e_name)
+            tparams = {
+                'title': 'Event Details',
+                'errors': False,
+                'user': self.get_user(),
+                'year': datetime.now().year,
+                'details': details,
+                'is_admin': is_admin
+            }
+            return self.render('event_details.html', tparams)
+    
+    # TODO: To be done
+    @cherrypy.expose
+    def delete_event(self, e_name=None):
+        if not self.get_user()['is_authenticated']:
+            raise cherrypy.HTTPRedirect('/login')
+        else:
+            self.delete_eventDB(e_name)
+            raise cherrypy.HTTPRedirect('/my_events')
+
     # #########################################
     # Add Info Pages
     @cherrypy.expose
@@ -603,6 +651,18 @@ class WebApp(object):
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         else:
+            if security_create or health_create or invite_create:
+                if invite_create:
+                    self.gen_event_invitations(e_name)
+                if security_create:
+                    security = security.split(',')
+                    print(security)
+                    self.gen_event_doc(e_name, security, doctype='Security')
+                if health_create:
+                    health = health.split(',')
+                    self.gen_event_doc(e_name, health, doctype='Health')
+                
+                raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
             tparams = {
                 'title': 'Create Documents',
                 'errors': False,
@@ -678,11 +738,6 @@ class WebApp(object):
                 'documents': documents
             }
             return self.render('see_documents.html', tparams)
-
-    # #########################################
-    @cherrypy.expose
-    def shut(self):
-        cherrypy.engine.exit()
 
     # #########################################
     # Error pages

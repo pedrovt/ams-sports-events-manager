@@ -130,7 +130,7 @@ def health_docs(entity_list=None,event=None,icon_path='../static/images/logo.png
 
 ##############################################################
 # invitations documents
-def invitations_docs(entity=None,event=None,icon_path='../static/images/logo.png',admin_name=None,dates=None,place=None):
+def invitations_docs(event=None,icon_path='../static/images/logo.png',admin_name=None,dates=None,place=None):
     doc = Document('basic',geometry_options=geometry_options)
     first_page = PageStyle("firstpage")
     s_date, e_date = date_process(dates)
@@ -159,7 +159,7 @@ def invitations_docs(entity=None,event=None,icon_path='../static/images/logo.png
                 pass
 
     # body
-    with doc.create(Section(title=NoEscape('\\normalsize{Caro '+entity+': }'), numbering=False)):
+    with doc.create(Section(title=NoEscape(''), numbering=False)):
         if e_date==s_date:
             doc.append('Vimos por este meio convidá-lo a participar no evento '+event+', que se realizará a '+s_date+', em '+place+'.')
         else:
