@@ -207,10 +207,13 @@ class WebApp(object):
 
     def add_inscription(self, e_name, insc_name):
         usr = self.get_user()['username']
+        print("\n\n\n\n\n\n")
+        print(e_name)
         get_sql = "select * from events where e_name='{}'".format(e_name)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(get_sql)
         event = cur.fetchall()[0]
+        print(event)
         management = event[2]
         insc_lst = event[-2]
         if usr not in management:
@@ -218,11 +221,12 @@ class WebApp(object):
         if not insc_lst:
             insc_lst = insc_name + PEOPLE_SEPARATOR
         else:
-            insc_lst += insc_name + ","
+            insc_lst += insc_name + PEOPLE_SEPARATOR
         put_sql = "update events set inscriptions='{}' where e_name='{}'".format(insc_lst, e_name)
         db_con.execute(put_sql)
         db_con.commit()
         db_con.close()
+        print("ADDED")
 
     # #########################################
     # Results
@@ -582,8 +586,14 @@ class WebApp(object):
 
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
-        else:
-            if e_name:
+        elif participant_username:
+            self.add_inscription(e_name, participant_username)
+            if more == True:
+                raise cherrypy.HTTPRedirect('/add_participants?e_name='+e_name)
+            else:
+                raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
+
+        elif e_name:
                 tparams = {
                     'title': 'Add Participants',
                     'errors': False,
