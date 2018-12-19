@@ -602,7 +602,7 @@ class WebApp(object):
             raise cherrypy.HTTPRedirect('/login')
         elif participant_username:
             self.add_inscription(e_name, participant_username)
-            if more == True:
+            if more == 'True':
                 raise cherrypy.HTTPRedirect('/add_participants?e_name='+e_name)
             else:
                 raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
