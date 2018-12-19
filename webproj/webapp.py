@@ -108,8 +108,8 @@ class WebApp(object):
                 'modality':event[7],
                 'participants':event[8],
                 'visible':event[9],
-                'icon_path':event[10],
-                'inscriptions':event[11]
+                'icon_path':event[11],
+                'inscriptions':event[10]
                 }
             lst.append(e)
         
@@ -131,8 +131,8 @@ class WebApp(object):
                 'modality':event[7],
                 'participants':event[8],
                 'visible':event[9],
-                'icon_path':event[10],
-                'inscriptions':event[11]
+                'icon_path':event[11],
+                'inscriptions':event[10]
                 }
             lst.append(e)
 
