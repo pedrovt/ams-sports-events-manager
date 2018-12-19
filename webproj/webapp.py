@@ -123,7 +123,6 @@ class WebApp(object):
             lst.append(e)
         
         # select events where user is a participant
-        # TODO simplty 
         # would be enough where team like '%{}%' or where inscriptions like '%{}%'
         sql = "select * from events where inscriptions like '%{}%'".format(username)    
         cur = db_con.execute(sql)
@@ -478,7 +477,6 @@ class WebApp(object):
     # Event Management Pages
     @cherrypy.expose
     def create_event(self, name=None, s_date=None, e_date=None, place=None, modality=None, participants=None, visibility=None, icon=None):
-        #TODO:
         # -> throw exception when event has something missing
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
@@ -486,7 +484,7 @@ class WebApp(object):
             # it always has participants so it is the way to check if it's first time accessign page
             if not participants:
                 tparams = {
-                    'title': 'Event creation Page',
+                    'title': 'Create an event',
                     'errors': False,
                     'user': self.get_user(),
                     'year': datetime.now().year,
@@ -512,7 +510,7 @@ class WebApp(object):
 
     @cherrypy.expose
     def my_events(self):
-        # TODO this page needs:
+        # this page needs:
         # -> Receive list of events info. Each event is a card
         #   -> Each card needs event name, dates & type
         if not self.get_user()['is_authenticated']:
@@ -553,9 +551,9 @@ class WebApp(object):
             }
             return self.render('event_details.html', tparams)
 
-    # TODO: To be done
+    # TODO: To finish
     @cherrypy.expose
-    def change_event(self, e_name=None, arg2alter=None, newarg=None):
+    def edit_event(self, e_name=None, arg2alter=None, newarg=None):
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
         elif not e_name:
@@ -569,14 +567,16 @@ class WebApp(object):
         else:
             details, is_admin = self.get_event_details(e_name)
             tparams = {
-                'title': 'Event Details',
+                'title': 'Edit Event',
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year,
                 'details': details,
-                'is_admin': is_admin
+                'is_admin': is_admin,
+                'e_name': e_name,
+                'sizes': EVENT_SIZES
             }
-            return self.render('event_details.html', tparams)
+            return self.render('edit_event.html', tparams)
     
     # TODO: To be done
     @cherrypy.expose
@@ -591,7 +591,6 @@ class WebApp(object):
     # Add Info Pages
     @cherrypy.expose
     def add_participants(self, e_name=None, participant_username=None, more=None):
-        # TODO December 18
         # when participant_username!= None:
         #   add inscription
         #   if more = True
@@ -622,7 +621,7 @@ class WebApp(object):
     def add_results(self, e_name=None, auto=None, participant_username=None, result=None, date=None):
         # this page needs:
         # -> If Add Result is pressed, add result and return to event_details
-        # TODO -> Else, fetch results from dummy sensor (JSON based?), return error 
+        # -> Else, fetch results from dummy sensor (JSON based?), return error 
 
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
@@ -643,13 +642,12 @@ class WebApp(object):
             
             if auto == True:    # TODO auto fetch results from virtual sensors
                 print("AUTO")
+                
             else:       
-                print("MANUAL")
+                #cherrypy.log("MANUAL")
                 self.add_result(e_name, participant_username, result, date)
             
             # redirect to event_details
-            # FIXME temp fix
-            print("\n\n\n\n\n\n\n")
             raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
 
     @cherrypy.expose
@@ -805,8 +803,10 @@ if __name__ == '__main__':
         }
     }
 
-    cherrypy.config.update({'error_page.404': error_page})      # COMMENT FOR DEBUG PURPOSES
-    cherrypy.config.update({'error_page.500': error_page})      # COMMENT FOR DEBUG PURPOSES
+    # COMMENT FOR DEBUG PURPOSES
+    cherrypy.config.update({'error_page.400': error_page})
+    cherrypy.config.update({'error_page.404': error_page})      
+    cherrypy.config.update({'error_page.500': error_page})      
     cherrypy.config.update({'server.socket_host' : '0.0.0.0'})  # THIS LINE CAN'T BE DELETED
 
     app = WebApp()

@@ -1,0 +1,149 @@
+{% extends "layout.html" %}
+
+{% block content %}
+
+<div class="jumbotron" style="background-image: url(static/images/header_level2.png); color:white">
+    <h1>{{ title }}</h1>
+    <p class="lead">Gave us wrong information about your event <i>{{e_name}}</i>? </p>
+    <form method="get" action="event_details">
+        <input type="hidden" value="{{e_name}}" name="e_name" />
+        <p><button type="submit" class="btn btn-large btn-secondary">Go back to the event description »</button></p>
+    </form>
+</div>
+
+<div class="container">
+    <div class="card-columns">
+        <!-- Name -->
+        <div class="card" style="min-width: 300px;">
+            <form action="edit_event" method="get" name="main_form">
+                <div class="card-body">
+                    <h5 class="card-title">Name</h5>
+                    <p class="card-text">
+                        <input type="hidden" value="{{e_name}}" name="e_name" />
+                        <input type="hidden" value="e_name" name="arg2alter" />
+                        <input class="form-control" id="newarg" maxlength="254" name="newarg" type="text" placeholder="e.g. The Gellers' Cup" required>
+                    </p>
+                </div>
+                
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-sm btn-primary">Change</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Start Date -->
+        <div class="card" style="min-width: 300px;">
+        <form action="edit_event" method="get" name="main_form">
+            <div class="card-body">
+                <h5 class="card-title">Start Date</h5>
+                <p class="card-text">
+                    <input type="hidden" value="{{e_name}}" name="e_name" />
+                    <input type="hidden" value="s_date" name="arg2alter" />
+                    <input class="form-control" id="newarg" maxlength="254" name="newarg" type="date" 
+                    required>
+                </p>
+            </div>
+        
+            <div class="card-footer">
+                <button type="submit" class="btn btn-sm btn-primary">Change</button>
+            </div>
+        </form>
+        </div>
+
+        <!-- End Date -->
+        <div class="card" style="min-width: 300px;">
+        <form action="edit_event" method="get" name="main_form">
+            <div class="card-body">
+                <h5 class="card-title">End Date</h5>
+                <p class="card-text">
+                    <input type="hidden" value="{{e_name}}" name="e_name" />
+                    <input type="hidden" value="e_date" name="arg2alter" />
+                    <input class="form-control" id="newarg" maxlength="254" name="newarg" type="date" 
+                    required>
+                </p>
+            </div>
+        
+            <div class="card-footer">
+                <button type="submit" class="btn btn-sm btn-primary">Change</button>
+            </div>
+        </form>
+        </div>
+        
+        <!-- Place -->
+        <div class="card" style="min-width: 300px;">
+            <form action="edit_event" method="get" name="main_form">
+                <div class="card-body">
+                    <h5 class="card-title">Place</h5>
+                    <p class="card-text">
+                        <input type="hidden" value="{{e_name}}" name="e_name" />
+                        <input type="hidden" value="place" name="arg2alter" />
+                        <input class="form-control" id="newarg" maxlength="254" name="newarg" type="text" placeholder="e.g. Aveiro, Braga Municipal Stadium" required>
+                    </p>
+                </div>
+                
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-sm btn-primary">Change</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Dimension -->
+        <div class="card" style="min-width: 300px;">
+            <form action="edit_event" method="get" name="main_form">
+                <div class="card-body">
+                    <h5 class="card-title">Dimension</h5>
+                    <p class="card-text">
+                        <input type="hidden" value="{{e_name}}" name="e_name" />
+                        <input type="hidden" value="participants" name="arg2alter" />
+                        <select id="id_e_part" name="newarg" class="form-control" type="number">
+                            {% for size in sizes %}
+                            {% if loop.first %}
+                            <option selected>{{size}} ({{sizes[size]}})</option>
+                            {% else %}
+                            <option>{{size}} ({{sizes[size]}})</option>
+                            {% endif %}
+                            {% endfor %}
+                        </select>
+                    </p>
+                </div>
+        
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-sm btn-primary">Change</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Visibility -->
+        <div class="card" style="min-width: 300px;">
+            <form action="edit_event" method="get" name="main_form">
+                <div class="card-body">
+                    <h5 class="card-title">Visibility</h5>
+                    <p class="card-text">
+                        <input type="hidden" value="{{e_name}}" name="e_name" />
+                        <input type="hidden" value="visibility" name="arg2alter" />
+                        <select id="id_e_part" name="newarg" class="form-control" type="number">
+                            <option selected>Public</option>
+                            <option>Private</option>
+                        </select>
+                    </p>
+                </div>
+        
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-sm btn-primary">Change</button>
+                </div>
+            </form>
+        </div>
+    
+    </div>
+    {% if errors %}
+    <p class="validation-summary-errors">Missing parameters</p>
+    {% endif %}
+
+</div>
+
+{% endblock %}
+
+
+{% block scripts %}
+    <script src="static/scripts/jquery.validate.min.js"></script>
+{% endblock %}
