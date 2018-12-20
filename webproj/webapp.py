@@ -169,8 +169,14 @@ class WebApp(object):
         sql = "delete from events where e_name='{}' and team like '%{}%'".format(name, username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
         cur = db_con.execute(sql)
+        doc_db = os.getcwd() + '/events_docs_db/' + name
+        if os.path.exists(doc_db):
+            sql = "delete from documents where e_name='{}'".format(name)
+            cur = db_con.execute(sql)
+            shutil.rmtree(doc_db)
         db_con.commit()
         db_con.close()
+
 
     def edit_eventDB(self, name, arg2alter, newarg):
         username = self.get_user()['username']
