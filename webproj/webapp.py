@@ -46,6 +46,21 @@ class WebApp(object):
             print(e)
         return None
 
+    def validate_dates(self, date_1, date_2):
+        s_y,s_m, s_d = date_1.split('-')
+        e_y, e_m, e_d = date_2.split('-')
+        print(s_y,'-',e_y,int(e_y)-int(s_y))
+        if int(s_y) > int(e_y):
+            print('Failed years check')
+            return False
+        if int(s_m) > int(e_m):
+            print('Failed months check')
+            return False
+        if int(s_d) > int(e_d):
+            print('Failed days check')
+            return False
+        return True
+
     # #########################################
     # User Authentication
     def set_user(self, username=None):
@@ -494,7 +509,17 @@ class WebApp(object):
                     'sizes': EVENT_SIZES
                 }
                 return self.render('create_event.html', tparams)
-               
+            if not self.validate_dates(s_date, e_date):
+                tparams = {
+                    'title': 'Failed Event creation',
+                    'errors': True,
+                    'user': self.get_user(),
+                    'year': datetime.now().year,
+                    'error': 'Invalid dates',
+                    'modalities': EVENT_MODALITIES,
+                    'sizes': EVENT_SIZES
+                }
+                return self.render('create_event.html', tparams)
             e = self.create_eventDB(name, s_date, e_date, place, modality, participants, visibility, icon)
             # send error to print in web UI
             if e:
@@ -503,7 +528,7 @@ class WebApp(object):
                     'errors': True,
                     'user': self.get_user(),
                     'year': datetime.now().year,
-                    'error': e,
+                    'error': 'Event name unavailable',
                     'modalities': EVENT_MODALITIES,
                     'sizes': EVENT_SIZES
                 }
