@@ -172,13 +172,17 @@ class WebApp(object):
         db_con.commit()
         db_con.close()
 
-    def alter_event(self, name, arg2alter, newarg):
+    def edit_eventDB(self, name, arg2alter, newarg):
         username = self.get_user()['username']
         sql = "update events set {}='{}' where e_name='{}' and team like '%{}%'".format(arg2alter,newarg,name,username)
         db_con = WebApp.db_connection(WebApp.dbsqlite)
-        cur = db_con.execute(sql)
-        db_con.commit()
-        db_con.close()
+        try:
+            cur = db_con.execute(sql)
+            db_con.commit()
+            db_con.close()
+            return None
+        except sqlite3.Error as e:
+            return e
 
     # #########################################
     # Inscriptions/Participants
@@ -286,7 +290,6 @@ class WebApp(object):
         except sqlite3.Error as e:
             return e
         
-        print("FINISH")
         return None
 
     # #########################################
@@ -583,28 +586,101 @@ class WebApp(object):
     def edit_event(self, e_name=None, arg2alter=None, newarg=None):
         if not self.get_user()['is_authenticated']:
             raise cherrypy.HTTPRedirect('/login')
-        elif not e_name:
-            tparams = {
-                'title': 'Event Details',
-                'errors': True,
-                'user': self.get_user(),
-                'year': datetime.now().year,
-            }
-            return self.render('event_details.html', tparams)
         else:
             details, is_admin = self.get_event_details(e_name)
-            tparams = {
-                'title': 'Edit Event',
-                'errors': False,
-                'user': self.get_user(),
-                'year': datetime.now().year,
-                'details': details,
-                'is_admin': is_admin,
-                'e_name': e_name,
-                'sizes': EVENT_SIZES
-            }
-            return self.render('edit_event.html', tparams)
-    
+            print(arg2alter, newarg)
+            if arg2alter=='s_date':
+                if not self.validate_dates(newarg, details['end']):
+                    tparams = {
+                        'title': 'Edit Event',
+                        'errors': True,
+                        'error': 'Invalid start date',
+                        'user': self.get_user(),
+                        'year': datetime.now().year,
+                        'details': details,
+                        'is_admin': is_admin,
+                        'e_name': e_name,
+                        'sizes': EVENT_SIZES
+                    }
+                    return self.render('edit_event.html', tparams)
+                self.edit_eventDB(e_name, arg2alter,newarg)
+                raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
+            elif arg2alter=='e_date':
+                if not self.validate_dates(details['start'],newarg):
+                    tparams = {
+                        'title': 'Edit Event',
+                        'errors': True,
+                        'error': 'Invalid ending date',
+                        'user': self.get_user(),
+                        'year': datetime.now().year,
+                        'details': details,
+                        'is_admin': is_admin,
+                        'e_name': e_name,
+                        'sizes': EVENT_SIZES
+                    }
+                    return self.render('edit_event.html', tparams)
+                self.edit_eventDB(e_name, arg2alter,newarg)
+                raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
+            elif arg2alter=='participant':
+                if EVENT_SIZES_MAX[newarg] or EVENT_SIZES_MAX[newarg] > details['inscriptions_count'] :
+                    tparams = {
+                        'title': 'Edit Event',
+                        'errors': True,
+                        'error': 'Remove some participants before trying to reduce event size',
+                        'user': self.get_user(),
+                        'year': datetime.now().year,
+                        'details': details,
+                        'is_admin': is_admin,
+                        'e_name': e_name,
+                        'sizes': EVENT_SIZES
+                    }
+                    return self.render('edit_event.html', tparams)
+                self.edit_eventDB(e_name, arg2alter,newarg)
+                raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
+            elif arg2alter=='e_name':
+                e = self.edit_eventDB(e_name, arg2alter,newarg)
+                if e:
+                    tparams = {
+                        'title': 'Edit Event',
+                        'errors': True,
+                        'error': 'Unavailable event name, try anothe',
+                        'user': self.get_user(),
+                        'year': datetime.now().year,
+                        'details': details,
+                        'is_admin': is_admin,
+                        'e_name': e_name,
+                        'sizes': EVENT_SIZES
+                    }
+                    return self.render('edit_event.html', tparams)
+                raise cherrypy.HTTPRedirect('/event_details?e_name='+newarg)
+            elif not arg2alter:
+                tparams = {
+                    'title': 'Edit Event',
+                    'errors': False,
+                    'user': self.get_user(),
+                    'year': datetime.now().year,
+                    'details': details,
+                    'is_admin': is_admin,
+                    'e_name': e_name,
+                    'sizes': EVENT_SIZES
+                }
+                return self.render('edit_event.html', tparams)
+            else:
+                tparams = {
+                    'title': 'Edit Event',
+                    'errors': True,
+                    'error': 'Remove some participants before trying to reduce event size',
+                    'user': self.get_user(),
+                    'year': datetime.now().year,
+                    'details': details,
+                    'is_admin': is_admin,
+                    'e_name': e_name,
+                    'sizes': EVENT_SIZES
+                }
+                self.edit_eventDB(e_name, arg2alter,newarg)
+                raise cherrypy.HTTPRedirect('/event_details?e_name='+e_name)
+
+
     # TODO: To be done
     @cherrypy.expose
     def delete_event(self, e_name=None):
