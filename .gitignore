@@ -45,4 +45,4 @@ output.json
 #NDK
 obj/
 .externalNativeBuildtests/
-tests/
+
