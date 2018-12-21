@@ -26,7 +26,7 @@
           <input type="hidden" value="{{e_name}}" name="e_name" />
           <input type="hidden" value="{{document['path']}}" name="path" />
           <input type="hidden" value="{{document['type']}}" name="doctype" />
-          <a class="card-link" onClick="openTab(this)" href="#" name="{{document['path']}}">View document</a>
+          <button type="submit" class="btn btn-sm btn-primary">View document</button>
           <small></small>
         </div>
         <p class="mb-1" href="{{document['path']}}">{{document['type']}}</p>

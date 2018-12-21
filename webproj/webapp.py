@@ -880,7 +880,7 @@ class WebApp(object):
                 'doctype':doctype,
                 'path': real_path
             }
-            return self.render('view_doc.html', tparams)
+            raise cherrypy.HTTPRedirect(path)
 
 
     
