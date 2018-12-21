@@ -12,7 +12,12 @@
 </div>
 
 <div class="container">
-    
+    <script type="text/javascript">
+      function openTab(th) {
+        window.open(th.name, '_blank');
+      }
+    </script>
+
     <div class="list-group">
       {% for document in documents %}
       <form method="get" action="view_doc" class="list-group-item list-group-item-action flex-column align-items-start">
@@ -21,7 +26,7 @@
           <input type="hidden" value="{{e_name}}" name="e_name" />
           <input type="hidden" value="{{document['path']}}" name="path" />
           <input type="hidden" value="{{document['type']}}" name="doctype" />
-          <button type="submit" class="btn btn-sm btn-primary">View document</button>
+          <a class="card-link" onClick="openTab(this)" href="#" name="{{document['path']}}">View document</a>
           <small></small>
         </div>
         <p class="mb-1" href="{{document['path']}}">{{document['type']}}</p>
