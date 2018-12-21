@@ -871,8 +871,9 @@ class WebApp(object):
             # documents = [{'name': 'NAME', 'type': 'HEALTH', 'path': 'URL'}, {
             #    'name': 'NAME1', 'type': 'HEALTH', 'path': 'URL'}]
             real_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),path)
+            print(real_path)
             tparams = {
-                'title': doctype + 'document of event ' + e_name,
+                'title': doctype + ' document of event ' + e_name,
                 'errors': False,
                 'user': self.get_user(),
                 'year': datetime.now().year,
@@ -880,10 +881,8 @@ class WebApp(object):
                 'doctype':doctype,
                 'path': real_path
             }
-            raise cherrypy.HTTPRedirect(path)
+            return self.render('view_doc.html', tparams)
 
-
-    
 # ##############################################################################
 # Error page
 def error_page(status, message, traceback, version):
