@@ -380,7 +380,8 @@ class WebApp(object):
             os.mkdir(db_path)
         new_path=os.path.join(db_path,os.path.basename(path))
         os.rename(path, new_path)
-        self.store_doc(name, new_path, doctype)
+        path_to_store = os.path.join('events_docs_db/'+name,os.path.basename(path))
+        self.store_doc(name, path_to_store, doctype)
         return new_path
 
     def gen_event_invitations(self, name, self_doc=False):
@@ -394,7 +395,8 @@ class WebApp(object):
             os.mkdir(db_path)
         new_path=os.path.join(db_path,os.path.basename(path_invites))
         os.rename(path_invites, new_path)
-        self.store_doc(name, new_path, 'invitations')
+        path_to_store = os.path.join('events_docs_db/'+name,os.path.basename(path_invites))
+        self.store_doc(name, path_to_store, 'invitations')
         return new_path
 
     def store_doc(self, name, path, doctype):
@@ -868,7 +870,7 @@ class WebApp(object):
             # for debug purposes 
             # documents = [{'name': 'NAME', 'type': 'HEALTH', 'path': 'URL'}, {
             #    'name': 'NAME1', 'type': 'HEALTH', 'path': 'URL'}]
-            print(e_name, doctype, path)
+            real_path=os.path.join(os.path.dirname(os.path.abspath(__file__)),path)
             tparams = {
                 'title': doctype + 'document of event ' + e_name,
                 'errors': False,
@@ -876,7 +878,7 @@ class WebApp(object):
                 'year': datetime.now().year,
                 'e_name': e_name,
                 'doctype':doctype,
-                'path': path
+                'path': real_path
             }
             return self.render('view_doc.html', tparams)
 
